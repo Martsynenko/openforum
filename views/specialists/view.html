@@ -1,0 +1,59 @@
+<a href="/specialists/" class="btn-next"> < Назад к списку</a>
+<div class="clear"></div>
+<?php if(Session::hasFlash('add_spec')): ?>
+<br>
+<div class="notice">
+    <p><?php Session::flash('add_spec'); ?></p>
+</div>
+<?php endif; ?>
+<div class="user-profile">
+    <img src="<?=$data['specialist']['avatar']?>" alt="avatar"/>
+    <div class="user-profile-info">
+    <h3><?=$data['specialist']['firstname'].' '.$data['specialist']['lastname']?></h3>
+        <p><span class="glyphicon glyphicon-list-alt"></span><?=$data['specialist']['category']?></p>
+        <p><span class="glyphicon glyphicon-education"></span><?=$data['specialist']['rank']?></p>
+        <p><span class="glyphicon glyphicon-info-sign"></span><?=$data['age']?> лет</p>
+        <p><span class="glyphicon glyphicon-map-marker"></span><?=$data['specialist']['city']?></p>
+        <span>Тем: <?=$data['user_topics']?></span>
+        <span>Ответов: <?=$data['user_answers']?></span>
+        <div class="user-profile-btn">
+            <?php if(isset($_SESSION['auth_user'])&&Session::get('id') != $data['specialist_id']): ?>
+            <?php if($data['btn_add']): ?>
+            <a href="" class="active">Добавлен</a>
+            <?php else: ?>
+            <a href="/specialists/view/<?=$data['specialist_id']?>/add">Добавить</a>
+            <?php endif; ?>
+        <a href="/user/messages/new/<?=$data['specialist_id']?>/">Задать вопрос</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+<h4 class="similar-user">Похожие специалисты</h4>
+<hr>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <?php Session::flash('nodata'); ?>
+</div>
+<?php endif; ?>
+<?php for($i=0;$i<count($data['similar']);$i++): ?>
+<?php
+    $user_id = $data['similar'][$i]['id'];
+    $avatar = $data['similar'][$i]['avatar'];
+    $firstname = $data['similar'][$i]['firstname'];
+    $lastname = $data['similar'][$i]['lastname'];
+    $rank = $data['similar'][$i]['rank'];
+    $city = $data['similar'][$i]['city'];
+?>
+<div class="specialist category">
+    <div class="specialist-item">
+        <img src="<?=$avatar?>" alt="avatar"/>
+        <div class="specialist-item-info">
+            <a href="/specialists/view/<?=$user_id?>"><h3><?=$firstname.' '.$lastname?></h3></a>
+            <p class="rank"><?=$rank?></p>
+            <p class="city"><?=$city?></p>
+        </div>
+    </div>
+</div>
+<?php if($i == 3) break; ?>
+<?php endfor; ?>

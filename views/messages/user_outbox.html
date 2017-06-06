@@ -3,8 +3,8 @@
     <table class="table table-bordered">
         <tr class="thead-menu">
             <td colspan="4">
-                <a href="" class="btn-category-active">Мои вопросы</a>
-                <a href="" class="btn-category">Вопросы мне</a>
+                <a href="/user/messages/" <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'index') { ?> class='btn-category-active' <?php } ?>>Мои вопросы <span class="badge">43</span></a>
+                <a href="/user/messages/me/" class="btn-category">Вопросы мне <span class="badge">12</span></a>
             </td>
         </tr>
         <tr class="thead">
