@@ -1,0 +1,46 @@
+<div class="block-forum">
+    <h3>Мои сообщения</h3>
+    <table class="table table-message-view">
+        <tr class="tbody">
+            <td>
+                <span class="title bold">Автор: <a href="/specialists/view/<?=$data['user_id']?>"><?=$data['firstname'].' '.$data['lastname']?></a></span>
+                <span class="title"><span class="bold">Специальность: </span><?=$data['rank']?></span>
+                <span class="title"><span class="bold">Получили: </span><?=$data['gets']?></span>
+                <span class="title"><span class="bold">Ответов: </span><?=$data['answers']?></span>
+            </td>
+            <td class="view">
+                <a href="/user/messages/delete/<?=$data['message_id']?>" class="link-delete">Удалить</a>
+            </td>
+        </tr>
+    </table>
+    <div class="text">
+        <p><?=htmlspecialchars_decode($data['text'])?></p>
+    </div>
+    <hr>
+</div>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <p><?php Session::flash('nodata'); ?></p>
+</div>
+<?php endif; ?>
+<div class="block-answer-view message-page">
+    <?php for($i=0;$i<count($data['data_answers']);$i++): ?>
+    <?php
+        $date_data = $data['data_answers'][$i]['date'];
+        $date_array = explode(' ', $date_data);
+        $date = $date_array[0];
+        $time = substr($date_array[1], 0, -3);
+    ?>
+    <div class="block-answer">
+        <div class="answer-info">
+            <a href="/specialists/view/<?=$data['data_answers'][$i]['user_id']?>"><img src="<?=$data['data_answers'][$i]['avatar']?>" alt="avatar"/></a>
+            <a href="/specialists/view/<?=$data['data_answers'][$i]['user_id']?>"><h3><?=$data['data_answers'][$i]['firstname'].' '.$data['data_answers'][$i]['lastname']?></h3></a>
+            <p>Ответил: <?=$date?> в <?=$time?></p>
+        </div>
+        <div class="clear"></div>
+        <div class="answer-text">
+            <p><?=$data['data_answers'][$i]['text']?></p>
+        </div>
+    </div>
+    <?php endfor; ?>
+</div>
