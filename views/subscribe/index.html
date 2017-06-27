@@ -1,0 +1,74 @@
+<div class="new_subject registration">
+    <h2>Оформление подписки</h2>
+    <?php if(Session::hasFlash('update')): ?>
+    <div class="notice">
+        <p><?php Session::flash('update'); ?></p>
+    </div>
+    <?php endif; ?>
+    <div class="category">
+        <form action="/forum/subscribe/" method='post'>
+            <table>
+                <tr>
+                    <td>
+                        <label for='category'>
+                            Выбирите категорию по которой Вы будете получать письма
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Категория <select id='category' name='category' class="select-category">
+                        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                        <option value="<?=$data['categories'][$i]['id']?>"><?=$data['categories'][$i]['category']?></option>
+                        <?php endfor; ?>
+                    </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Ваше имя
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name='name' maxlength="255" required placeholder="Введите Ваше имя"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Ваш email
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" name='email' maxlength="255" required placeholder="Введите Ваш email"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" value="Оформить подписку"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

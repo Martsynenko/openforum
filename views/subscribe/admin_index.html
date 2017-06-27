@@ -1,0 +1,54 @@
+<?php if(isset($_SESSION['admin_user'])): ?>
+<a href="/admin/section/add/" class="btn btn-info btn-add">Разослать письма</a>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td class="td-id">
+            ID
+        </td>
+        <td>
+            Имя
+        </td>
+        <td>
+            Email
+        </td>
+        <td class="td-date">
+            Категория
+        </td>
+        <td class="td-date">
+            Действие
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['users']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['users'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['firstname']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['email']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['category']?>
+        </td>
+        <td class="td-action">
+            <a href="/admin/forum/deletesubscribe/<?=$data['users'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <script>
+                function confirmDelete() {
+                    if (confirm("Вы подтверждаете удаление?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>

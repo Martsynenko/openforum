@@ -1,0 +1,108 @@
+<?php if(Session::hasFlash('notice_insert')): ?>
+<div class="notice">
+    <p><?php Session::flash('notice_insert'); ?></p>
+</div>
+<?php endif; ?>
+<div class="new_subject">
+    <h2>Создание новой темы</h2>
+    <div class="category">
+        <form action="/topics/new/" method="post">
+            <table>
+                <tr>
+                    <td>
+                        <label for="category">
+                            Выбрать категорию
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id='category' name='category' class="select-category">
+                            <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                            <option value="<?=$data['categories'][$i]['id']?>"><?=$data['categories'][$i]['category']?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="rank">
+                            Выбрать специальность
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id='rank' name='rank'>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-input">
+                        <input type="text" name='user_rank' class='input-rank' style='display: none;' placeholder="Введите свою специальность"/>
+                    </td>
+                    <script>
+                        $('#rank').change(function(){
+                            var id = $('#rank').val();
+                            if(id == 0){
+                                $('.input-rank').css('display', '');
+                            } else {
+                                $('.input-rank').css('display', 'none');
+                            }
+                        })
+                    </script>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="sub">
+                            Тема сообщения
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name='subject' id="sub"required maxlength="255" placeholder="Введите тему сообщения"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="answer">
+                            Текст сообщения
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea name='text' id='answer' required rows="10"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" value="Опубликовать тему"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
