@@ -1,10 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<?php if(Session::hasFlash('send')): ?>
+<div class="notice">
+    <p><?php Session::flash('send'); ?></p>
+</div>
+<?php endif; ?>
+<?php if(Session::hasFlash('nousers')): ?>
+<div class="error">
+    <p><?php Session::flash('nousers'); ?></p>
+</div>
+<?php endif; ?>
+<div class="sending-messages">
+    <h2>Рассылка вопросов</h2>
+    <div class="category">
+        <form action="" method="post">
+        <table>
+            <tr>
+                <td>
+                    <label for="category">
+                        Выбрать категорию
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="category" id="category">
+                        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                        <option value="<?=$data['categories'][$i]['id']?>"><?=$data['categories'][$i]['category']?></option>
+                        <?php endfor; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="rank">
+                        Выбрать специальность
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select id='rank' name="rank">
+                        <?php for($i=0;$i<count($data['ranks']);$i++): ?>
+                        <option value="<?=$data['ranks'][$i]['id']?>"><?=$data['ranks'][$i]['rank']?></option>
+                        <?php endfor; ?>
+                    </select>
+                </td>
+            </tr>
+            <script>
+                $('#rank').change(function(){
+                    var id = $('#rank').val();
+                    if(id == 0){
+                        $('.input-rank').css('display', '');
+                    } else {
+                        $('.input-rank').css('display', 'none');
+                    }
+                })
+            </script>
+            <tr class="input-rank" style="display: none;">
+                <td>
+                    <input type="text" name='user_rank' maxlength="255" placeholder="Введите специальность"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="for">
+                        Кому
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select id='for' name="for">
+                        <?php if(isset($data['user_id'])): ?>
+                        <option value="<?=$data['user_id']?>"><?=$data['firstname'].' '.$data['lastname']?></option>
+                        <?php else: ?>
+                        <option value="all">Всем специалистам</option>
+                        <option value="my">Моим специалистам</option>
+                        <?php endif; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="answer">
+                        Текст сообщения
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea name='text' id='answer' required rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-btn">
+                    <input type="submit" value="Разослать сообщение"/>
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
+</div>
+<?php endif; ?>

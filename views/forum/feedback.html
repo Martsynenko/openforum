@@ -1,10 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(Session::hasFlash('notice')): ?>
+<div class="notice">
+    <p><?php Session::flash('notice'); ?></p>
+</div>
+<?php endif; ?>
+<div class="new_subject feedback">
+    <h2>Форма обратной связи</h2>
+    <div class="category">
+        <form action="/forum/feedback/" method="post">
+        <table>
+            <tr>
+                <td>
+                    <label for="name">
+                        Ваше имя
+                    </label>
+                    <?php if(Session::hasFlash('firstname')): ?>
+                    <p class="input-error"><?php Session::Flash('firstname') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name='name' id='name' required maxlength="255" placeholder="Введите ваше имя"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="email">
+                        Ваш email
+                    </label>
+                    <?php if(Session::hasFlash('email')): ?>
+                    <p class="input-error"><?php Session::Flash('email') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="email" name='email' id='email' required maxlength="255" placeholder="Введите ваш email"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="subject">
+                        Тема сообщения
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name='subject' id='subject' required maxlength="255" placeholder="Введите тему сообщения"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="answer">
+                        Текст сообщения
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea name='text' id="answer" required rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-btn">
+                    <input type="submit" value="Отправить сообщение"/>
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
+</div>

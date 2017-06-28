@@ -1,0 +1,84 @@
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="block-message">
+    <h3>Мои сообщения / Вопрос мне от <?=$data['lastname']?> <?=$data['firstname']?></h3>
+    <div class="header-menu">
+        <a href="/">На главную</a>
+        <a href="/user/messages/outbox/">Мои вопросы</a>
+        <a href="/user/messages/inbox/">Вопросы мне</a>
+        <a href="/topics/my/">Мои темы</a>
+        <a href="/user/specialists/index/">Мои специалисты</a>
+    </div>
+    <div class="message-item bg-yellow">
+        <a href="/user/messages/indelete/<?=$data['message_id']?>" onclick="return confirmDelete()"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+        <?php if(!empty($data['answer'])): ?>
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        <?php endif; ?>
+        <div class="message-item-left">
+            <a href="/specialists/view/<?=$data['user_id']?>"><h6><?=$data['lastname']?> <?=$data['firstname']?></h6></a>
+            <a href="/specialists/view/<?=$data['user_id']?>"><img src="<?=$data['avatar']?>" alt="avatar"/></a>
+            <p class="user"><?=$data['position']?></p>
+            <p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$data['city']?></p>
+        </div>
+        <div class="message-item-right">
+            <span class="date">Вопрос задан: <span class="bold"><?=$data['date']?> в <?=$data['time']?></span> по специальности <span class="bold"><?=$data['rank']?></span></span>
+            <p class="text"><?=htmlspecialchars_decode($data['text'])?></p>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <?php if(!empty($data['answer'])): ?>
+    <?php if(empty($data['answer']['email'])) $position = 'Пользователь';
+          else $position = 'Специалист';
+          $date_data = $data['answer']['date'];
+          $date_array = explode(' ', $date_data);
+          $date = $date_array[0];
+          $time = substr($date_array[1], 0, -3);
+    ?>
+
+    <div class="message-item">
+        <div class="message-item-left">
+            <a href="/specialists/view/<?=$data['answer']['user_id']?>"><h6><?=$data['answer']['lastname']?> <?=$data['answer']['firstname']?></h6></a>
+            <a href="/specialists/view/<?=$data['answer']['user_id']?>"><img src="<?=$data['answer']['avatar']?>" alt="avatar"/></a>
+            <p class="user"><?=$data['position']?></p>
+            <p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$data['answer']['city']?></p>
+        </div>
+        <div class="message-item-right">
+            <span class="date">Ответил: <span class="bold"><?=$date?> в <?=$time?></span></span>
+            <p class="text"><?=htmlspecialchars_decode($data['answer']['text'])?></p>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <?php endif; ?>
+</div>
+<?php if(empty($data['answer'])): ?>
+<div class="new_subject input-answer">
+    <div class="category">
+        <form action="/user/messages/inview/<?=$data['message_id']?>" method="post">
+            <table>
+                <tr>
+                    <td>
+                        <label for="answer">
+                            Ваш ответ
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea name='answer' id="answer" maxlength="1000" required rows="8"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" value="Отправить сообщение"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<?php endif; ?>
+<?php endif; ?>

@@ -1,10 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="new_subject">
+    <h2>Восстоновление пароля</h2>
+    <p>Введите полученый код в поле подтверждение и нажмите Проверить код</p>
+    <div class="category">
+        <form action="/auth/code/" method="post">
+            <table>
+                <tr>
+                    <td>
+                        <label for="email">
+                            Ваш email
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" name='email' id="email" readonly <?php if(isset($_SESSION['email'])): ?> value='<?=$_SESSION['email']?>' <?php endif; ?>/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="input-code">
+                        <label for="code">
+                            Код подтверждения
+                        </label>
+                        <?php if(Session::hasFlash('wrong_code')): ?>
+                        <p class="input-error"><?php Session::Flash('wrong_code') ?></p>
+                        <?php endif; ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="code">
+                        <div class="input-code">
+                        <input type="text" name='code' id='code' maxlength="6" required placeholder="Код"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" class='btn-recovery' value="Проверить код"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

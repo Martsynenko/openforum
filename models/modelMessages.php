@@ -1,8 +1,15 @@
 <?php
 
-class Mess extends Model{
+class modelMessages extends Model{
 
     /* NEW MESSAGE*/
+
+    public function checkIssetRank($rank){
+        $sql = "SELECT `id` FROM `db_rank`
+                WHERE `rank` = '$rank'";
+        $data = $this->db->query($sql);
+        return $data;
+    }
 
     public function getCategories(){
         $sql = 'SELECT * FROM `db_category`';
@@ -112,7 +119,7 @@ class Mess extends Model{
         if(empty($array_id)) return false;
         else {
             $str_id = implode(', ', $array_id);
-            $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, m.`id`, m.`subject`, m.`date` FROM `db_messages` as m
+            $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, m.`text`, m.`id`, m.`date` FROM `db_messages` as m
                     JOIN `db_category`
                     ON(m.`cat_id` = `db_category`.`id`)
                     JOIN `db_rank`
@@ -125,8 +132,21 @@ class Mess extends Model{
 
     /* VIEW MESSAGE */
 
+    public function getUserPosition($user_id){
+        $sql = "SELECT `email` FROM `db_users`
+                WHERE `id` = '$user_id'";
+        $data = $this->db->query($sql);
+        if(empty($data)){
+            $str = 'Пользователь';
+            return $str;
+        } else {
+            $str = 'Специалист';
+            return $str;
+        }
+    }
+
     public function getUserMessageOut($message_id){
-        $sql = "SELECT COUNT(`message_id`) as answers, `db_rank`.`rank`, `db_users`.`id` as user_id, `firstname`, `lastname`, `db_messages`.`text`, `db_messages`.`users` FROM `db_messages`
+        $sql = "SELECT COUNT(`message_id`) as answers, `db_rank`.`rank`, `db_users`.`id` as user_id, `avatar`, `firstname`, `lastname`, `db_messages`.`text`, `db_messages`.`users` FROM `db_messages`
                 JOIN `db_users`
                 ON(`db_messages`.user_id = `db_users`.id)
                 JOIN `db_rank`
@@ -138,7 +158,7 @@ class Mess extends Model{
     }
 
     public function getUserMessageIn($message_id){
-        $sql = "SELECT `db_rank`.`rank`, `db_users`.`id` as user_id, `firstname`, `lastname`, `db_messages`.`text`, `db_messages`.`date` FROM `db_messages`
+        $sql = "SELECT `db_rank`.`rank`, `db_users`.`id` as user_id, `avatar`, `city`, `firstname`, `lastname`, `db_messages`.`text`, `db_messages`.`date` FROM `db_messages`
                 JOIN `db_users`
                 ON(`db_messages`.user_id = `db_users`.id)
                 JOIN `db_rank`
@@ -148,7 +168,7 @@ class Mess extends Model{
     }
 
     public function getAnswers($message_id){
-        $sql = "SELECT `db_users`.`id` as user_id, `avatar`, `firstname`, `lastname`, `date`, `text` FROM `db_messages_answers`
+        $sql = "SELECT `db_users`.`id` as user_id, `avatar`, `firstname`, `lastname`, `city`, `email`, `date`, `text` FROM `db_messages_answers`
                 JOIN `db_users`
                 ON(`db_users`.`id` = `db_messages_answers`.`user_id`)
                 WHERE `message_id` = '$message_id'
@@ -187,6 +207,19 @@ class Mess extends Model{
         $sql = "SELECT `message_id` FROM `db_messages_answers`
                 WHERE `user_id` = '$user_id'";
         return $this->db->query($sql);
+    }
+
+    public function getUserAnswer($user_id, $message_id){
+        $sql = "SELECT `db_users`.`id` as user_id, `avatar`, `firstname`, `lastname`, `city`, `email`, `date`, `text` FROM `db_messages_answers`
+                JOIN `db_users`
+                ON(`db_users`.`id` = `db_messages_answers`.`user_id`)
+                WHERE `message_id` = '$message_id' AND `user_id` = '$user_id'";
+        $data = $this->db->query($sql);
+        if(!empty($data)){
+            return $data[0];
+        } else {
+            return false;
+        }
     }
 
     /* ADMIN INDEX */

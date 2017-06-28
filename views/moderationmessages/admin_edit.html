@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<h2 class="admin-block-title">Редактирование вопроса ID <?=$data['message_id']?></h2>
+<div class="form-edit">
+    <?php if(Session::hasFlash('update')): ?>
+    <div class="notice">
+        <p><?php Session::flash('update'); ?></p>
+    </div>
+    <?php endif; ?>
+    <form action="/admin/moderationmessages/edit/<?=$data['message_id']?>" method="post">
+        <label>
+            Текст вопроса
+        </label>
+        <div class="group">
+            <textarea id="answer" required name="text"><?=htmlspecialchars_decode($data['message'])?></textarea>
+        </div>
+        <input type="submit"/>
+    </form>
+</div>

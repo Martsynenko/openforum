@@ -1,10 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="форум, специалисты, задать, вопрос, совет, узнать, поиск, ответы, кулинария, юридические, программистов"/>
+    <meta name="description" content="openForum - самый быстрый способ узнать совет у специалистов. Форум для всех категорий профессий и любых специальностей."/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title><?=Config::get('sitename')?></title>
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link href="/css/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Khula" rel="stylesheet">
+
+
+    <!-- include libraries(jQuery, bootstrap) -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+
+    <!-- include summernote css/js-->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Khula" rel="stylesheet">-->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/summernote.min.js"></script>
+    <script src="/js/lang/summernote-ru-RU.js"></script>
+    <script src="/js/script.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+
+    <script>
+        function confirmDelete() {
+            if (confirm("Вы подтверждаете удаление?")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
 </head>
-<body>
-$END$
+<body >
+<div id="admin-header">
+    <h1>open<span>Forum</span> | Админ панель</h1>
+    <div class="admin-name">
+        <span>Александр</span>
+        <a href="/auth/logout/">Выход</a>
+    </div>
+</div>
+<div id="admin-wrapp">
+    <div id="admin-menu">
+        <ul>
+            <li>
+                <a href="/admin/forum/index" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'forum'
+                && App::getRouter()->getAction() == 'index') { ?> admin-active <?php } ?>">Темы</a>
+            </li>
+            <li>
+                <a href="/admin/messages/index/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'messages') { ?> admin-active <?php } ?>">Вопросы</a>
+            </li>
+            <li>
+                <a href="/admin/users/index/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'users') { ?> admin-active <?php } ?>">Пользователи</a>
+            </li>
+            <li>
+                <a href="/admin/moderationtopics/index/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'moderationtopics') { ?> admin-active <?php } ?>">Модерация тем</a>
+            </li>
+            <li>
+                <a href="/admin/moderationmessages/index/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'moderationmessages') { ?> admin-active <?php } ?>">Модерация вопросов</a>
+            </li>
+            <li>
+                <a href="/admin/section/index/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'section') { ?> admin-active <?php } ?>">Категории</a>
+            </li>
+            <li>
+                <a href="/admin/rank/index/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'rank') { ?> admin-active <?php } ?>">Специальности</a>
+            </li>
+            <li>
+                <a href="/admin/feedback/index" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'feedback') { ?> admin-active <?php } ?>">Feedback</a>
+            </li>
+            <li>
+                <a href="/admin/subscribe/index" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'subscribe'
+                && App::getRouter()->getAction() == 'index') { ?> admin-active <?php } ?>">Подписки</a>
+            </li>
+            <li>
+                <a href="/admin/forum/statistic/" class="btn btn-info
+                <?php if(App::getRouter()->getRoute() == 'admin'
+                && App::getRouter()->getController() == 'forum'
+                && App::getRouter()->getAction() == 'statistic') { ?> admin-active <?php } ?>">Статистика</a>
+            </li>
+        </ul>
+    </div>
+    <div class="clear">
+        <div id="admin-content">
+            <?= $data['content'] ?>
+        </div>
+    </div>
+</div>
 </body>
 </html>

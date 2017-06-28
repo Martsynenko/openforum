@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<h2 class="admin-block-title">Редактирование категории</h2>
+<div class="form-edit">
+    <?php if(Session::hasFlash('update')): ?>
+    <div class="notice">
+        <p><?php Session::flash('update'); ?></p>
+    </div>
+    <?php endif; ?>
+    <form action="/admin/section/edit/<?=$data['cat_id']?>" method="post">
+        <label>
+            Название категории
+        </label>
+        <div class="group">
+            <input type="text" name="title" required maxlength="255" value="<?=$data['category']?>" placeholder="Введите категорию"/>
+        </div>
+        <input type="submit"/>
+    </form>
+</div>

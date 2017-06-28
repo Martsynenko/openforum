@@ -1,10 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td class="td-id">
+            ID
+        </td>
+        <td class="td-date">
+            Имя
+        </td>
+        <td class="td-date">
+            Фамилия
+        </td>
+        <td class="td-date">
+            Email
+        </td>
+        <td class="td-date">
+            Пароль
+        </td>
+        <td class="td-date">
+            Категория
+        </td>
+        <td class="td-date">
+            Специальн.
+        </td>
+        <td class="td-date">
+            Дата рождения
+        </td>
+        <td class="td-date">
+            Дата регистрации
+        </td>
+        <td class="td-id">
+            Фото
+        </td>
+        <td class="td-date">
+            Действие
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['users']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['users'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['firstname']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['lastname']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['email']?>
+        </td>
+        <td>
+            (<?=substr($data['users'][$i]['password'], 0, 15)?>...)
+        </td>
+        <td>
+            <?=$data['users'][$i]['category']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['rank']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['birthday']?>
+        </td>
+        <td>
+            <?=$data['users'][$i]['date_reg']?>
+        </td>
+        <td>
+            <img src="<?=$data['users'][$i]['avatar']?>" alt="foto"/>
+        </td>
+        <td class="td-action">
+            <a href="/admin/users/statistic/<?=$data['users'][$i]['id']?>" class="btn btn-info">Статистика</a>
+            <?php if(!empty($data['users_block'])): ?>
+            <?php if(in_array($data['users'][$i]['id'], $data['users_block'])): ?>
+            <a href="/admin/users/unblock/<?=$data['users'][$i]['id']?>" onclick="return confirmunBlock();" class="btn btn-warning">Разблокировать</a>
+            <?php else: ?>
+            <a href="/admin/users/block/<?=$data['users'][$i]['id']?>" onclick="return confirmBlock();" class="btn btn-primary">Заблокировать</a>
+            <?php endif; ?>
+            <?php else: ?>
+            <a href="/admin/users/block/<?=$data['users'][$i]['id']?>" onclick="return confirmBlock();" class="btn btn-primary">Заблокировать</a>
+            <?php endif; ?>
+            <a href="/admin/users/delete/<?=$data['users'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <script>
+                function confirmDelete() {
+                    if (confirm("Вы подтверждаете удаление?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                function confirmBlock() {
+                    if (confirm("Вы подтверждаете блокирование пользователя?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                function confirmunBlock() {
+                    if (confirm("Вы подтверждаете разблокирование пользователя?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>

@@ -1,10 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<h2 class="admin-block-title">Статистика пользователя <span class="blue"><?=$data['user']['lastname']?> <?=$data['user']['firstname']?></span></h2>
+<div class="block-statistic">
+    <img src="<?=$data['user']['avatar']?>" alt="avatar"/>
+    <div class="table-statistic">
+        <table class="table table-striped">
+            <tr>
+                <td class="td-title">
+                    Имя:
+                </td>
+                <td>
+                    <span><?=$data['user']['firstname']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Фамилия:
+                </td>
+                <td>
+                    <span><?=$data['user']['lastname']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Категория:
+                </td>
+                <td>
+                    <span><?=$data['user']['category']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Специальность:
+                </td>
+                <td>
+                    <span><?=$data['user']['rank']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Дата регистрации:
+                </td>
+                <td>
+                    <span><?=$data['user']['date_reg']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Созданых тем:
+                </td>
+                <td>
+                    <span><?=$data['count_topics']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Разослано вопросов:
+                </td>
+                <td>
+                    <span><?=$data['count_messages']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Всего ответов:
+                </td>
+                <td>
+                    <span><?=$data['count_answers']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Посещений:
+                </td>
+                <td>
+                    <span><?=$data['count_visits']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Время проведенное на сайте:
+                </td>
+                <td>
+                    <span>
+                        <?php if(isset($data['day'])): ?>
+                        <?=$data['day']?> <span style="color: #979797">дней</span> /
+                        <?php endif; ?>
+                        <?php if($data['hour'] != 00): ?>
+                        <?=$data['hour']?> <span style="color: #979797">часов</span> /
+                        <?php endif; ?>
+                        <?=$data['minute']?> <span style="color: #979797">минут</span> /
+                        <?=$data['second']?> <span style="color: #979797">секунд</span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <a href="#" class="btn-back-main">Назад</a>
+</div>
+<?php endif; ?>

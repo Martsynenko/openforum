@@ -1,6 +1,6 @@
 <?php
 
-class userTopic extends Model{
+class modelTopic extends Model{
 
     public function getCategories(){
         $sql = 'SELECT * FROM `db_category`';
@@ -38,7 +38,7 @@ class userTopic extends Model{
     }
 
     public function getUserTopic($topic_id){
-        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar`, `db_topics`.* FROM `db_topics`
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar`, `email`, `city`, `db_topics`.* FROM `db_topics`
                 JOIN `db_users`
                 ON(`db_topics`.user_id = `db_users`.id)
                 JOIN `db_category`
@@ -52,7 +52,7 @@ class userTopic extends Model{
     public function getAnswers($page, $topic_id){
         $first_topic = $page * 5 - 5;
         $count_topic = 5;
-        $sql = "SELECT `db_users`.`firstname`, `db_users`.`lastname`, `db_users`.`avatar`, `db_topics_answers`.* FROM `db_topics_answers`
+        $sql = "SELECT `db_users`.`firstname`, `db_users`.`lastname`, `db_users`.`avatar`, `email`, `city`, `db_topics_answers`.* FROM `db_topics_answers`
                 JOIN `db_users`
                 ON(`db_topics_answers`.user_id = `db_users`.id)
                 WHERE `db_topics_answers`.`topic_id` = '$topic_id'
@@ -125,6 +125,33 @@ class userTopic extends Model{
                 WHERE `rank` = '$rank'";
         $data = $this->db->query($sql);
         return $data;
+    }
+
+    public function getAnswerID($user_id, $date, $answer){
+        $sql = "SELECT `id` FROM `db_topics_answers`
+                WHERE `user_id` = '$user_id' AND `date` = '$date' AND `text` = '$answer'";
+        $data = $this->db->query($sql);
+        return $data[0]['id'];
+    }
+
+    public function getAnswerInfoByID($answer_id){
+        $sql = "SELECT `db_users`.`firstname`, `db_users`.`lastname`, `db_topics_answers`.* FROM `db_topics_answers`
+                JOIN `db_users`
+                ON(`db_users`.`id` = `db_topics_answers`.`user_id`)
+                WHERE `db_topics_answers`.`id` = '$answer_id'";
+        return $this->db->query($sql);
+    }
+
+    public function insertAnswerComment($topic_id, $answer_id, $firstname, $lastname, $date_answer, $text){
+        $sql = "INSERT INTO `db_topics_comments` (`topic_id`, `answer_id`, `firstname`, `lastname`, `date`, `text`)
+                VALUES ('$topic_id', '$answer_id', '$firstname', '$lastname', '$date_answer', '$text')";
+        return $this->db->query($sql);
+    }
+
+    public function getComments($topic_id){
+        $sql = "SELECT * FROM `db_topics_comments`
+                WHERE `topic_id` = '$topic_id'";
+        return $this->db->query($sql);
     }
 
     /* ADMIN EDIT */

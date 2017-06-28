@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<h2 class="admin-block-title">Ответное письмо на сообщение ID <?=$data['message_id']?></h2>
+<div class="form-edit">
+    <?php if(Session::hasFlash('send')): ?>
+    <div class="notice">
+        <p><?php Session::flash('send'); ?></p>
+    </div>
+    <?php endif; ?>
+    <form action="/admin/feedback/answer/<?=$data['message_id']?>" method="post">
+        <label>
+            Тема сообщения
+        </label>
+        <div class="group">
+            <input type="text" name="subject" required maxlength="255" placeholder="Введите тему письма"/>
+        </div>
+        <label>
+            Текст сообщения
+        </label>
+        <div class="group">
+            <textarea id="answer" required name="text"></textarea>
+        </div>
+        <input type="submit"/>
+    </form>
+</div>

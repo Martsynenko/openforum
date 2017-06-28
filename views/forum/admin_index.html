@@ -1,10 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td class="td-id">
+                ID
+            </td>
+            <td class="td-cat">
+                Категория
+            </td>
+            <td class="td-rank">
+                Специальность
+            </td>
+            <td class="td-title">
+                Тема
+            </td>
+            <td class="td-text">
+                Текст
+            </td>
+            <td class="td-date">
+                Дата
+            </td>
+            <td class="td-user">
+                Пользователь
+            </td>
+            <td class="td-action">
+                Действие
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['topics']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['topics'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['topics'][$i]['category']?>
+        </td>
+        <td>
+            <?=$data['topics'][$i]['rank']?>
+        </td>
+        <td>
+            <?=$data['topics'][$i]['subject']?>
+        </td>
+        <td>
+            <?=htmlspecialchars_decode($data['topics'][$i]['text'])?>
+        </td>
+        <td>
+            <?=$data['topics'][$i]['date']?>
+        </td>
+        <td>
+            <?=$data['topics'][$i]['lastname']?> <?=$data['topics'][$i]['firstname']?>
+        </td>
+        <td class="td-action">
+            <a href="/admin/topics/edit/<?=$data['topics'][$i]['id']?>" class="btn btn-primary">Редактировать</a>
+            <a href="/admin/topics/delete/<?=$data['topics'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <script>
+                function confirmDelete() {
+                    if (confirm("Вы подтверждаете удаление?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>

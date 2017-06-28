@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<a href="/admin/section/add/" class="btn btn-info btn-add">Добавить категорию</a>
+<?php if(Session::get('prohibition_category')): ?>
+<div class="warning">
+    <p><?=Session::get('prohibition_category'); ?></p>
+</div>
+<?php unset($_SESSION['prohibition_category']); ?>
+<?php endif; ?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td class="td-id">
+            ID
+        </td>
+        <td>
+            Категория
+        </td>
+        <td class="td-date">
+            Действие
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['category']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['category'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['category'][$i]['category']?>
+        </td>
+        <td class="td-action">
+            <a href="/admin/section/edit/<?=$data['category'][$i]['id']?>" class="btn btn-primary">Редактировать</a>
+            <a href="/admin/section/delete/<?=$data['category'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <script>
+                function confirmDelete() {
+                    if (confirm("Вы подтверждаете удаление?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>

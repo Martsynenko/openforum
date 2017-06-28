@@ -1,10 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<h2 class="admin-block-title">Статистика сайта на <?=$data['date']?></h2>
+<div class="block-statistic">
+    <div class="table-statistic-site">
+        <h1>open<span>Forum</span></h1>
+        <table class="table table-striped">
+            <tr>
+                <td class="td-title">
+                    Всего пользователей:
+                </td>
+                <td>
+                    <span><?=$data['users']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-title">
+                    Зарегистрированных сегодня:
+                </td>
+                <td>
+                    <span><?=$data['users_today']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Всего тем:
+                </td>
+                <td>
+                    <span><?=$data['topics']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Созданных сегодня:
+                </td>
+                <td>
+                    <span><?=$data['topics_today']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Разослано вопросов:
+                </td>
+                <td>
+                    <span><?=$data['messages']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Разослано вопросов сегодня:
+                </td>
+                <td>
+                    <span><?=$data['messages_today']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Уникальных посещений:
+                </td>
+                <td>
+                    <span><?=$data['visits']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Уникальных посещений сегодня:
+                </td>
+                <td>
+                    <span><?=$data['visits_today']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Категорий:
+                </td>
+                <td>
+                    <span><?=$data['category']?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Специальностей:
+                </td>
+                <td>
+                    <span><?=$data['rank']?></span>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+    </div>
+</div>
+<?php endif; ?>

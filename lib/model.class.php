@@ -1,7 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: орпр
- * Date: 24.05.2017
- * Time: 13:47
- */
+
+class Model{
+
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = App::$db;
+    }
+
+}

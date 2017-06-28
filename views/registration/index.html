@@ -1,10 +1,232 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="new_subject registration">
+    <h2>Регистрация</h2>
+    <div class="category">
+        <form action='/registration/' method='post'>
+        <table>
+            <tr>
+                <td>
+                    <label for='firstname'>
+                        Имя
+                    </label>
+                    <?php if(Session::hasFlash('firstname')): ?>
+                    <p class="input-error"><?php Session::Flash('firstname') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name='firstname' id='firstname' required maxlength="50" placeholder="Введите ваше имя"
+                    <?php if(isset($_POST['firstname'])): ?> value='<?=$_POST['firstname']?>' <?php endif; ?>/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='lastname'>
+                        Фамилия
+                    </label>
+                    <?php if(Session::hasFlash('lastname')): ?>
+                    <p class="input-error"><?php Session::Flash('lastname') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name='lastname' id='lastname' required maxlength="50" placeholder="Введите вашу фамилию"
+                    <?php if(isset($_POST['lastname'])): ?> value='<?=$_POST['lastname']?>' <?php endif; ?>/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='city'>
+                        Город
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name='city' id='city' required maxlength="100" placeholder="Введите город проживания"
+                    <?php if(isset($_POST['city'])): ?> value='<?=$_POST['city']?>' <?php endif; ?>/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="email">
+                        Email
+                    </label>
+                    <?php if(Session::hasFlash('email')): ?>
+                    <p class="input-error"><?php Session::Flash('email') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="email" name='email' id='email' required maxlength="255" placeholder="Введите ваш email"
+                    <?php if(isset($_POST['email'])): ?> value='<?=$_POST['email']?>' <?php endif; ?>/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='password'>
+                        Пароль
+                    </label>
+                    <?php if(Session::hasFlash('password')): ?>
+                    <p class="input-error"><?php Session::Flash('password') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="password" name='password' id='password' required maxlength="100" placeholder="Придумайте надежный пароль"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='category'>
+                        Выбирите категорию и специальность в которой вы разбераетесь лучше всего
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Категория <select id='category' name='category' class="select-category">
+                        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                        <option value="<?=$data['categories'][$i]['id']?>"><?=$data['categories'][$i]['category']?></option>
+                        <?php endfor; ?>
+                        </select>
+                    <br>
+                    Специальность <select id='rank' name='rank'>
+
+                        </select>
+                    <script>
+                        $('#rank').change(function(){
+                            var id = $('#rank').val();
+                            if(id == 0){
+                                $('.input-rank').css('display', '');
+                            } else {
+                                $('.input-rank').css('display', 'none');
+                            }
+                        })
+                    </script>
+                    <input type="text" name='user_rank' class='input-rank' style='display: none;' placeholder="Введите свою специальность"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='date'>
+                        Дата рождения
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Год <select name='year' id='date' class="date">
+                        <?php for($i=1960;$i<2006;$i++): ?>
+                        <option value='<?=$i?>'><?=$i?></option>
+                        <?php endfor; ?>
+                        </select>
+                    Месяц <select name='month' id='month' class="month">
+                        <?php $value = 1; ?>
+                        <?php for($i=0;$i<count($data['month']);$i++): ?>
+                        <option value='<?=$value?>'><?=$data['month'][$i]?></option>
+                        <?php $value++;?>
+                        <?php endfor; ?>
+                        </select>
+                    День <select name='day' id="day" class="date">
+
+                        </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" name='cond' required value="1"/>
+                    <p class="condition">Я соглашаюсь с условиями <a href="#" data-toggle="modal" data-target="#myModal">политики конфиденциальности</a> форума</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-btn">
+                    <input type="submit" name='send_reg' value="Зарегистрироваться"/>
+                </td>
+            </tr>
+        </table>
+        </form>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Политика конфиденциальности open<span class="blue">Forum</span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Данное соглашение о конфиденциальности разработано в соответствии с требованиями Закона Украины № 2297 от 01.06.2010г. «О защите персональных данных» и иных нормативных актов украинского законодательства, регламентирующих правовые отношения, связанные со сбором, обработкой, хранением  персональных данных, а также правом граждан на невмешательство в личную жизнь и правом на самовыражение.</p>
+                        <h6>Общая часть</h6>
+                        <p>openForum, заботясь о развитии взаимоотношений с пользователями нашего веб-портала, понимая важность обеспечения охраны Ваших персональных данных, с целью разрешения возможных противоречий и недоразумений подготовило данное Соглашение о конфиденциальности (политику конфиденциальности), далее по тексту – «Политика конфиденциальности», и условия пользования веб-порталом www.openforum.com.ua, далее по тексту – «веб-портал». </p>
+                        <p>Просим Вас обратить внимание, что согласно условий Политики конфиденциальности при Вашем посещении ресурсов данного веб-портала Вы подтверждаете свое согласие с правилами и требованиями Политики конфиденциальности и условиями пользования веб-порталом.</p>
+                        <p>Данная Политика конфиденциальности действует с «01» июля 2017 года и будет обновляться по мере необходимости и/или в следствие изменений действующего законодательства.</p>
+                        <h6>Ограничения согласно Политики конфиденциальности</h6>
+                        <p>Согласно условий Политики конфиденциальности при пользовании веб-порталом Вы должны придерживаться следующих правил:</p>
+                        <p>- не используйте веб-портал ненадлежащим образом. В частности, не пытайтесь влиять или вмешиваться в его работу или получить доступ к информации не через стандартный интерфейс;</p>
+                        <p>- используйте веб-портал только в соответствии с нормами украинского законодательства;</p>
+                        <p>Если Вы будете нарушать данную Политику конфиденциальности или если мы обоснованно заподозрим Вас в этом, мы можем приостановить или полностью закрыть Вам доступ к веб-порталу.</p>
+                        <h6>Ваши права как субъекта персональных данных</h6>
+                        <p>Обращаем внимание на то, что Ваши права как субъекта персональных данных предусмотрены статьей 8 Закона Украины №2297 от 01.06.2010г. «О защите персональных данных»</p>
+                        <h6>Цели сбора Ваших персональных данных</h6>
+                        <p>Мы собираем и используем персональные данные (в том числе ФИО, город Вашего проживания, электронную почту) для лучшего предоставления Вам необходимых услуг и информации. </p>
+                        <h6>Безопасность ваших персональных данных</h6>
+                        <p>Мы ценим вашу персональную информацию, поэтому обеспечиваем достаточный уровень ее защиты. Поэтому мы реализовали технологии, направленные на защиту ваших конфиденциальных данных от несанкционированного доступа и ненадлежащего использования, и будем соответствующим образом обновлять эти меры при появлении новых технологий.</p>
+                        <h6>Политика в отношении файлов cookie</h6>
+                        <p>При работе портала нами используются файлы cookie. С их помощью возможна идентификация браузера пользователей, которые посещают наш портал повторно, в этих файлах возможно сохранение настроек пользователей и других сведений.</p>
+                        <p>Использование этой информации помогает нам делать портал максимально удобным и полезным для Вас, поддерживать, защищать и развивать сервисы нашего портала.</p>
+                        <h6>Дополнительные информация</h6>
+                        <p>openForum принимает меры, чтобы информация на данном портале была достоверной. Однако мы не берем на себя ответственность и не гарантируем, что предоставленная информация и данные являются точными, объективными и актуальными на момент просмотра. </p>
+                        <p>При работе с веб-порталом Вам не предоставляются права на интеллектуальную собственность ни на сам веб-портал, ни на его содержание, ни на использование любых элементов брендинга или логотипов нашего веб-портала.</p>
+                        <p>Я согласен с Политикой конфиденциальности и условиями пользования веб-порталом, а также с передачей и обработкой моих данных. </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

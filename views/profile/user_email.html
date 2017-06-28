@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="new_subject registration">
+    <h2>Редактирование Email адреса</h2>
+    <p class="info-text">Введите Ваш новый Email адрес, на который прийдет код для подтверждения почтового адреса.</p>
+    <div class="category">
+        <form action="/user/profile/email/" method='post'>
+            <table>
+                <tr>
+                    <td>
+                        <label>
+                            Ваш новый Email
+                        </label>
+                        <?php if(Session::hasFlash('email')): ?>
+                        <p class="input-error"><?php Session::Flash('email') ?></p>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" name='email' maxlength="255" required placeholder="Введите ваш email"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" name='send_reg' value="Отправить код"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<?php endif; ?>

@@ -1,10 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="block-message">
+    <h3>Тема создана: <?=$data['date']?></h3>
+    <div class="header-menu">
+        <a href="/">На главную</a>
+        <a href="/topics/my/">Мои темы</a>
+        <?php if(!empty($data['btn_prev'])): ?>
+        <a href="<?=$data['btn_prev']?>">Предыдущая тема</a>
+        <?php endif; ?>
+        <?php if(!empty($data['btn_next'])): ?>
+        <a href="<?=$data['btn_next']?>">Следущая тема</a>
+        <?php endif; ?>
+    </div>
+    <div class="message-item bg-yellow">
+        <div class="message-item-left">
+            <?php
+            $email = $data['email'];
+            if(empty($email)) $position = 'Пользователь';
+            else $position = 'Специалист';
+            ?>
+            <?php if(!empty($email)): ?>
+            <a href="/specialists/view/<?=$data['user_id']?>"><h6><?=$data['lastname']?> <?=$data['firstname']?></h6></a>
+            <a href="/specialists/view/<?=$data['user_id']?>"><img src="<?=$data['avatar']?>" alt="avatar"/></a>
+            <?php else: ?>
+            <h6><?=$data['lastname']?> <?=$data['firstname']?></h6>
+            <img src="<?=$data['avatar']?>" alt="avatar"/>
+            <?php endif; ?>
+            <p class="user"><?=$position?></p>
+            <?php if(!empty($email)): ?>
+            <p class="city"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$data['city']?></p>
+            <?php endif; ?>
+        </div>
+        <div class="message-item-right">
+            <div>
+                <span class="date">Категория: <span class="bold"><?=$data['category']?></span></span>
+                <span class="date">Специальность: <span class="bold"> <?=$data['rank']?></span></span>
+                <span class="date">Просмотров: <span class="bold"><?=$data['views']?></span></span>
+            </div>
+            <p class="subject">Тема: <?=$data['subject']?></p>
+            <p class="text"><?=htmlspecialchars_decode($data['text'])?></p>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <?php for($i=0;$i<count($data['answers']);$i++):?>
+    <?php
+            $answer_id = $data['answers'][$i]['id'];
+            $user_id = $data['answers'][$i]['user_id'];
+            $avatar = $data['answers'][$i]['avatar'];
+            $city = $data['answers'][$i]['city'];
+            if(empty($avatar)) $avatar = Config::get('avatar');
+            $text = $data['answers'][$i]['text'];
+            $text = htmlspecialchars_decode($text);
+            $date_data = $data['answers'][$i]['date'];
+            $date_array = explode(' ', $date_data);
+            $date = $date_array[0];
+            $time = substr($date_array[1], 0, -3);
+            $firstname = $data['answers'][$i]['firstname'];
+            $lastname = $data['answers'][$i]['lastname'];
+            $email = $data['answers'][$i]['email'];
+            if(empty($email)){
+                $position = 'Пользователь';
+            } else $position = 'Специалист';
+        ?>
+    <div class="message-item">
+        <div class="message-item-left">
+            <?php if(!empty($email)): ?>
+            <a href="/specialists/view/<?=$user_id?>"><h6><?=$firstname?> <?=$lastname?></h6></a>
+            <a href="/specialists/view/<?=$user_id?>"><img src="<?=$avatar?>" alt="avatar"/></a>
+            <?php else: ?>
+            <h6><?=$firstname?> <?=$lastname?></h6>
+            <img src="<?=$avatar?>" alt="avatar"/>
+            <?php endif; ?>
+            <p class="user"><?=$position?></p>
+            <?php if(!empty($email)): ?>
+            <p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$city?></p>
+            <?php endif; ?>
+        </div>
+        <div class="message-item-right">
+            <span class="date">Ответил: <span class="bold"><?=$date?> в <?=$time?></span></span>
+            <?php if(!empty($data['comments'])): ?>
+            <?php for($j=0;$j<count($data['comments']);$j++): ?>
+            <?php if($answer_id == $data['comments'][$j]['answer_id']): ?>
+            <?php
+                $date_answer = $data['comments'][$j]['date'];
+                $date_answer = explode(' ', $date_answer);
+                $day_answer = $date_answer[0];
+                $time_answer = substr($date_answer[1], 0, -3);
+            ?>
+            <div class="comment-block">
+                <p class="comment-date">Ответ <?=$data['comments'][$j]['firstname']?> <?=$data['comments'][$j]['lastname']?> <span class="glyphicon glyphicon-time" aria-hidden="true"></span><?=$day_answer?> в <?=$time_answer?></p>
+                <span class="comment-text"><?=htmlspecialchars_decode($data['comments'][$j]['text'])?></span>
+            </div>
+            <?php endif;?>
+            <?php endfor; ?>
+            <?php endif; ?>
+            <p class="text"><?=htmlspecialchars_decode($text)?></p>
+            <p class="btn-answer"><span class="btn-comment<?=$i?>" >Ответить</span> на комментарий <?=$firstname?> <?=$lastname?></p>
+            <script>
+                $(".btn-comment<?=$i?>").click(
+                    function(){
+                        $('.label-answer').text(function(index, value){
+                            str = 'Ваш ответ на комментарий <?=$lastname?> <?=$firstname?>';
+                            return str;
+                        });
+                        $('#answer').summernote('focus');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            value: '<?=$answer_id?>',
+                            name: 'comment'
+                        }).appendTo('form');
+                    });
+            </script>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <?php endfor; ?>
+    <?php if($data['count_topics'] > 5): ?>
+    <div class="block-pagination">
+        <div class="pagination-view">
+            <nav aria-label="Page navigation" class="page-navigation">
+                <ul class="pagination">
+
+                    <?php if($data['page'] != 1): ?>
+                    <li>
+                        <a href="<?=$data['link_previous']?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+
+                    <?php
+                $count_items = 0;
+                for($i=$data['page_start'];$i<=$data['count_pages'];$i++):
+                $link = "/forum/view/$i/".$data['topic_id'];
+            ?>
+                    <li><a href="<?=$link?>" <?php if($i == $data['page']) echo "class='active'" ?>> <?=$i?> </a></li>
+                    <?php
+                $count_items++;
+                if($count_items%5===0) break;
+                endfor;
+            ?>
+
+                    <?php if($data['page'] != $data['count_pages']): ?>
+                    <li>
+                        <a href="<?=$data['link_next']?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <?php Session::flash('nodata'); ?>
+</div>
+<?php endif ?>
+<div class="clear"></div>
+<div class="clear"></div>
+<div class="new_subject input-answer">
+    <div class="category">
+        <form action="<?=$data['link_action']?>" method="post">
+            <table>
+                <tr>
+                    <td>
+                        <label for="answer" class="label-answer">
+                            Ваш ответ
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea name='answer' id="answer" maxlength="1000" required rows="8"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" value="Отправить сообщение"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

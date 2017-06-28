@@ -1,10 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="new_subject registration">
+    <h2>Редактирование профиля</h2>
+    <?php if(Session::hasFlash('update')): ?>
+    <div class="notice">
+        <p><?php Session::flash('update'); ?></p>
+    </div>
+    <?php endif; ?>
+    <div class="category">
+        <form action='/user/profile/edit/' method='post'>
+            <table>
+                <tr>
+                    <td>
+                        <label>
+                            Имя
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name='firstname' disabled value="<?=$data['user']['firstname']?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Фамилия
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name='lastname' disabled value="<?=$data['user']['lastname']?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for='city'>
+                            Город
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name='city' id='city' required maxlength="100" placeholder="Введите город проживания" value="<?=$data['user']['city']?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Email
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" name='email' disabled value="<?=$data['user']['email']?>"/>
+                        <a href="/user/profile/email/" class="btn-edit">Изменить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Пароль
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="password" name='password' disabled value="<?=$data['user']['password']?>"/>
+                        <a href="/user/profile/password/" class="btn-edit">Изменить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Категория <select name='category' disabled class="select-category">
+                        <option value="<?=$data['user']['cat_id']?>"><?=$data['user']['category']?></option>
+                        </select>
+                        <br>
+                        Специальность <select name='rank' disabled>
+                        <option value="<?=$data['user']['rank_id']?>"><?=$data['user']['rank']?></option>
+                    </select>
+                        <br>
+                        <a href="/user/profile/rank/" class="btn-edit">Изменить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" name='send_reg' value="Редактировать"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<p class="notice-text">Если Вы хотите удалить аккаунт нажмите <a href="/user/profile/delete">здесь</a>. Если у Вас возникли проблемы с использованием Вашего аккаунта обратитесь в <a href="/forum/feedback">службу поддержки</a> openForum.</p>
+<?php endif; ?>

@@ -1,46 +1,60 @@
-<div class="block-forum">
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="block-message">
     <h3>Мои сообщения</h3>
-    <table class="table table-message-view">
-        <tr class="tbody">
-            <td>
-                <span class="title bold">Автор: <a href="/specialists/view/<?=$data['user_id']?>"><?=$data['firstname'].' '.$data['lastname']?></a></span>
-                <span class="title"><span class="bold">Специальность: </span><?=$data['rank']?></span>
-                <span class="title"><span class="bold">Получили: </span><?=$data['gets']?></span>
-                <span class="title"><span class="bold">Ответов: </span><?=$data['answers']?></span>
-            </td>
-            <td class="view">
-                <a href="/user/messages/delete/<?=$data['message_id']?>" class="link-delete">Удалить</a>
-            </td>
-        </tr>
-    </table>
-    <div class="text">
-        <p><?=htmlspecialchars_decode($data['text'])?></p>
+    <div class="header-menu">
+        <a href="/">На главную</a>
+        <a href="/user/messages/outbox/">Мои вопросы</a>
+        <a href="/user/messages/inbox/">Вопросы мне</a>
+        <a href="/topics/my/">Мои темы</a>
+        <a href="/user/specialists/index/">Мои специалисты</a>
     </div>
-    <hr>
-</div>
-<?php if(Session::hasFlash('nodata')): ?>
-<div class="notice">
-    <p><?php Session::flash('nodata'); ?></p>
-</div>
-<?php endif; ?>
-<div class="block-answer-view message-page">
+    <div class="message-item bg-yellow">
+        <a href="/user/messages/outdelete/<?=$data['message_id']?>" onclick="return confirmDelete()"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+        <div class="message-item-left">
+            <a href="/specialists/view/<?=$data['user_id']?>"><h6><?=$data['lastname']?> <?=$data['firstname']?></h6></a>
+            <a href="/specialists/view/<?=$data['user_id']?>"><img src="<?=$data['avatar']?>" alt="avatar"/></a>
+            <p class="user"><?=$data['position']?></p>
+            <p class="city"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>Одесса</p>
+        </div>
+        <div class="message-item-right">
+            <div>
+                <span class="date">Специальность: <span class="bold"><?=$data['rank']?></span></span>
+                <span class="date">Получили: <span class="bold"><?=$data['gets']?></span></span>
+                <span class="date">Ответов: <span class="bold"><?=$data['answers']?></span></span>
+            </div>
+            <p class="text"><?=htmlspecialchars_decode($data['text'])?></p>
+        </div>
+        <div class="clear"></div>
+    </div>
     <?php for($i=0;$i<count($data['data_answers']);$i++): ?>
     <?php
         $date_data = $data['data_answers'][$i]['date'];
         $date_array = explode(' ', $date_data);
         $date = $date_array[0];
         $time = substr($date_array[1], 0, -3);
+        $email = $data['data_answers'][$i]['email'];
+        if(empty($email)){
+            $position = 'Пользователь';
+        } else $position = 'Специалист';
     ?>
-    <div class="block-answer">
-        <div class="answer-info">
+    <div class="message-item">
+        <div class="message-item-left">
+            <a href="/specialists/view/<?=$data['data_answers'][$i]['user_id']?>"><h6><?=$data['data_answers'][$i]['lastname']?> <?=$data['data_answers'][$i]['firstname']?></h6></a>
             <a href="/specialists/view/<?=$data['data_answers'][$i]['user_id']?>"><img src="<?=$data['data_answers'][$i]['avatar']?>" alt="avatar"/></a>
-            <a href="/specialists/view/<?=$data['data_answers'][$i]['user_id']?>"><h3><?=$data['data_answers'][$i]['firstname'].' '.$data['data_answers'][$i]['lastname']?></h3></a>
-            <p>Ответил: <?=$date?> в <?=$time?></p>
+            <p class="user"><?=$position?></p>
+            <p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$data['data_answers'][$i]['city']?></p>
+        </div>
+        <div class="message-item-right">
+            <span class="date">Ответил: <span class="bold"><?=$date?> в <?=$time?></span></span>
+            <p class="text"><?=htmlspecialchars_decode($data['data_answers'][$i]['text'])?></p>
         </div>
         <div class="clear"></div>
-        <div class="answer-text">
-            <p><?=$data['data_answers'][$i]['text']?></p>
-        </div>
     </div>
     <?php endfor; ?>
 </div>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <p><?php Session::flash('nodata'); ?></p>
+</div>
+<?php endif; ?>
+<?php endif ?>

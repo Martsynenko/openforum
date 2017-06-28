@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="block-forum user-specialist">
+    <h3>Мои специалисты</h3>
+        <?php if(!empty($data['specialists'])): ?>
+        <?php for($i=0;$i<count($data['specialists']);$i++): ?>
+        <div class="list-specialist-item">
+            <div class="list-specialist-user">
+                <a href="/specialists/view/<?=$data['specialists'][$i]['user_id']?>"><img src="<?=$data['specialists'][$i]['avatar']?>" alt="avatar"/></a>
+                <span class="bold"><a href="/specialists/view/<?=$data['specialists'][$i]['user_id']?>" class="name"><?=$data['specialists'][$i]['firstname'].' '.$data['specialists'][$i]['lastname']?></a></span>
+                <p><span class="bold"><?=$data['specialists'][$i]['rank']?></span></p>
+            </div>
+            <div class="list-specialist-action">
+                <p><a href="/user/messages/new/<?=$data['specialists'][$i]['user_id']?>">Задать вопрос</a></p>
+                <p><a href="/user/specialists/delete/<?=$data['specialists'][$i]['user_id']?>" onclick="return confirmDelete()">Удалить из списка</a></p>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <?php endfor; ?>
+        <?php endif; ?>
+
+    <?php if(Session::hasFlash('nodata')): ?>
+    <div class="notice">
+        <p><?php Session::flash('nodata'); ?></p>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>

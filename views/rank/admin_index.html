@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<a href="/admin/rank/add/" class="btn btn-info btn-add">Добавить специальность</a>
+<?php if(Session::get('prohibition_rank')): ?>
+<div class="warning">
+    <p><?=Session::get('prohibition_rank'); ?></p>
+</div>
+<?php unset($_SESSION['prohibition_rank']); ?>
+<?php endif; ?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td class="td-id">
+            ID
+        </td>
+        <td>
+            Специальность
+        </td>
+        <td class="td-date">
+            Категория
+        </td>
+        <td class="td-date">
+            Действие
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['rank']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['rank'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['rank'][$i]['rank']?>
+        </td>
+        <td>
+            <?=$data['rank'][$i]['category']?>
+        </td>
+        <td class="td-action">
+            <a href="/admin/rank/edit/<?=$data['rank'][$i]['id']?>" class="btn btn-primary">Редактировать</a>
+            <a href="/admin/rank/delete/<?=$data['rank'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>

@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<h2 class="admin-block-title">Добавление новой категории</h2>
+<div class="form-edit">
+    <?php if(Session::hasFlash('add')): ?>
+    <div class="notice">
+        <p><?php Session::flash('add'); ?></p>
+    </div>
+    <?php endif; ?>
+    <?php if(Session::hasFlash('isset')): ?>
+    <div class="warning">
+        <p><?php Session::flash('isset'); ?></p>
+    </div>
+    <?php endif; ?>
+    <form action="/admin/section/add/" method="post">
+        <label>
+            Название категории
+        </label>
+        <div class="group">
+            <input type="text" name="title" required maxlength="255" placeholder="Введите категорию"/>
+        </div>
+        <input type="submit"/>
+    </form>
+</div>

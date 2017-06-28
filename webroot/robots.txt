@@ -1,0 +1,13 @@
+User-Agent: *
+Disallow: /admin/
+Disallow: /admin/forum/
+Disallow: /admin/messages/
+Disallow: /admin/users/
+Disallow: /admin/moderationtopics/
+Disallow: /admin/moderationmessages/
+Disallow: /admin/section/
+Disallow: /admin/rank/
+Disallow: /admin/feedback/
+
+Host: openforum.com.ua
+Sitemap: http://openforum.com.ua/webroot/sitemap.xml

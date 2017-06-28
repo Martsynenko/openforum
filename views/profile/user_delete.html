@@ -1,10 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="new_subject registration">
+    <h2>Удаление аккаунта</h2>
+    <p class="info-text">Для удаления Вашего аккаунта подтвердите Ваш Email адрес и пароль.</p>
+    <div class="category">
+        <form action="/user/profile/delete/" method='post'>
+            <?php if(Session::hasFlash('wrong_data')): ?>
+            <p class="input-error"><?php Session::Flash('wrong_data') ?></p>
+            <?php endif; ?>
+            <table>
+                <tr>
+                    <td>
+                        <label>
+                            Ваш Email
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" name='email' maxlength="255" required placeholder="Введите ваш email"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Ваш пароль
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="password" name='password' maxlength="255" required placeholder="Введите Ваш старый пароль"
+                        <?php if(isset($_POST['password'])): ?> value='<?=$_POST['password']?>' <?php endif; ?>/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" name='send_reg' onclick="return confirmDelete()" value="Удалить аккаунт"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<?php endif; ?>

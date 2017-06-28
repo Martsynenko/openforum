@@ -1,14 +1,10 @@
 <?php
 
-class Spec extends Model{
+class modelSpecialists extends Model{
 
     public function getCategories(){
-        $sql = 'SELECT * FROM `db_category`';
-        return $this->db->query($sql);
-    }
-
-    public function getRanks($cat_id){
-        $sql = "SELECT * FROM `db_rank` WHERE `cat_id` = $cat_id";
+        $sql = 'SELECT * FROM `db_category`
+                ORDER BY `category`';
         return $this->db->query($sql);
     }
 
@@ -155,7 +151,11 @@ class Spec extends Model{
                     WHERE `user_id` = '$user_id'";
             $data = $this->db->query($sql);
             $str = $data[0]['specialists'];
-            $str .= ", $spec_id";
+            if(empty($str)){
+                $str = "$spec_id";
+            } else {
+                $str .= ", $spec_id";
+            }
             $sql = "UPDATE `db_user_specialists` SET `specialists` = '$str'
                     WHERE `user_id` = '$user_id'";
             return $this->db->query($sql);
@@ -182,8 +182,8 @@ class Spec extends Model{
         $sql = "SELECT `specialists` FROM `db_user_specialists`
                 WHERE `user_id` = '$user_id'";
         $data = $this->db->query($sql);
-        if(!empty($data)){
-            $str = $data[0]['specialists'];
+        $str = $data[0]['specialists'];
+        if(!empty($str)){
             $sql = "SELECT `db_rank`.`rank`, COUNT(`user_id`) as sub, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar` FROM `db_users` 
                     JOIN `db_rank`
                     ON(`db_users`.`rank_id` = `db_rank`.`id`)

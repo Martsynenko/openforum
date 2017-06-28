@@ -1,6 +1,6 @@
 <?php
 
-class AuthUser extends Model{
+class modelAuth extends Model{
 
     public function checkBanUser($user_id){
         $sql = "SELECT `id` FROM `db_users_block`
@@ -75,11 +75,10 @@ class AuthUser extends Model{
         $sql = "SELECT `specialists` FROM `db_user_specialists`
                 WHERE `user_id` = '$user_id'";
         $data = $this->db->query($sql);
-        if(!empty($data)){
+        if(!empty($data[0]['specialists'])){
             $str = $data[0]['specialists'];
             $array = explode(', ', $str);
             $count = count($array);
-            echo $count;
             return $count;
         } else return false;
     }

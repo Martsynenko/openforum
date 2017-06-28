@@ -1,10 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="new_subject">
+    <h2>Восстоновление пароля</h2>
+    <p>Введите новый пароль. Под этим паролем Вы сможете заходить в свой Личный кабинет.</p>
+    <?=Session::get('code')?>
+    <div class="category">
+        <form action="/auth/newpass/" method="post">
+            <table>
+                <tr>
+                    <td>
+                        <label for="email">
+                            Ваш email
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" name='email' id="email" readonly <?php if(isset($_SESSION['email'])): ?> value='<?=$_SESSION['email']?>' <?php endif; ?>/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="password">
+                            Ваш новый пароль
+                        </label>
+                        <?php if(Session::hasFlash('valid_password')): ?>
+                        <p class="input-error"><?php Session::Flash('valid_password') ?></p>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="password" name='password' id='password' maxlength="100" required
+                        <?php if(isset($_POST['password'])): ?> value='<?=$_POST['password']?>' <?php endif; ?>
+                        placeholder="Введите ваш пароль"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="password1">
+                            Повторите ваш пароль
+                        </label>
+                        <?php if(Session::hasFlash('wrong_password')): ?>
+                        <p class="input-error"><?php Session::Flash('wrong_password') ?></p>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="password" name='password1' id="password1" maxlength="100" required placeholder="Введите ваш пароль еще раз"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" class='btn-recovery' value="Проверить код"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

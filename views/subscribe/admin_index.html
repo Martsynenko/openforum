@@ -1,5 +1,5 @@
 <?php if(isset($_SESSION['admin_user'])): ?>
-<a href="/admin/section/add/" class="btn btn-info btn-add">Разослать письма</a>
+<a href="/admin/subscribe/send/" class="btn btn-info btn-add">Разослать письма</a>
 <table class="table table-bordered">
     <thead>
     <tr>
@@ -36,7 +36,7 @@
             <?=$data['users'][$i]['category']?>
         </td>
         <td class="td-action">
-            <a href="/admin/forum/deletesubscribe/<?=$data['users'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <a href="/admin/subscribe/delete/<?=$data['users'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
             <script>
                 function confirmDelete() {
                     if (confirm("Вы подтверждаете удаление?")) {

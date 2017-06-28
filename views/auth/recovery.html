@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="new_subject">
+    <h2>Восстоновление пароля</h2>
+    <p>Введите ваш email на который будет отправлено письмо с кодом подтверждения. </p>
+    <div class="category">
+        <form action="/auth/recovery/" method="post">
+        <table>
+            <tr>
+                <td>
+                    <label for="email">
+                        Ваш email
+                    </label>
+                    <?php if(Session::hasFlash('wrong_email')): ?>
+                    <p class="input-error"><?php Session::Flash('wrong_email') ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="email" name='email' id="email" required maxlength="255" placeholder="Введите ваш email"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-btn">
+                    <input type="submit" class='btn-recovery' value="Отправить код"/>
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
+</div>

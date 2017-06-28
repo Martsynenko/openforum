@@ -1,10 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<h2 class="admin-block-title">Добавление новой специальности</h2>
+<div class="form-edit">
+    <?php if(Session::hasFlash('add')): ?>
+    <div class="notice">
+        <p><?php Session::flash('add'); ?></p>
+    </div>
+    <?php endif; ?>
+    <?php if(Session::hasFlash('wrong_rank')): ?>
+    <div class="warning">
+        <p><?php Session::flash('wrong_rank'); ?></p>
+    </div>
+    <?php endif; ?>
+    <form action="/admin/rank/add/" method="post">
+        <label for="category">
+            Категория
+        </label>
+        <div class="group">
+            <select name="category" id="category">
+                <?php for($i=0;$i<count($data['category']);$i++): ?>
+                <option value="<?=$data['category'][$i]['id']?>"><?=$data['category'][$i]['category']?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+        <label for="rank">
+            Название специальности
+        </label>
+        <div class="group">
+            <input type="text" name="title" id="rank" required maxlength="255" placeholder="Введите специальность"/>
+        </div>
+        <input type="submit"/>
+    </form>
+</div>

@@ -1,10 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="block-forum">
+    <h3>Мои сообщения </h3>
+    <table class="table table-bordered">
+        <tr class="thead-menu">
+            <td colspan="4">
+                <a href="/user/messages/outbox/"
+                <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'outbox'): ?>
+                class='btn-category-active'
+                <?php else: ?>
+                class="btn-category"
+                <?php endif; ?>>
+                Мои вопросы <span class="badge"><?=$data['count_outbox']?></span></a>
+                <a href="/user/messages/inbox/"
+                <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'inbox'): ?>
+                class='btn-category-active'
+                <?php else: ?>
+                class="btn-category"
+                <?php endif; ?>>
+                Вопросы мне <span class="badge"><?=$data['count_inbox']?></span></a>
+            </td>
+        </tr>
+        <tr class="thead">
+            <td class="category">
+                <p class="title">Категор./Специальность</p>
+            </td>
+            <td class="subject">
+                <p class="title">Вопрос</p>
+            </td>
+        </tr>
+        <?php if($data['messages']): ?>
+        <?php for($i=0;$i<count($data['messages']);$i++): ?>
+        <?php
+            $date_data = $data['messages'][$i]['date'];
+            $date_array = explode(' ', $date_data);
+            $date = $date_array[0];
+            $time = substr($date_array[1], 0, -3);
+            $title_ask = 'Ответить';
+            $class_ask = 'link-view';
+            for($j=0;$j<count($data['isset_answer']);$j++){
+                if($data['isset_answer'][$j]['message_id'] == $data['messages'][$i]['id']){
+                    $title_ask = 'Отвечено';
+                    $class_ask = 'link-view-active';
+                }
+            }
+        ?>
+        <tr class="tbody">
+            <td>
+                <p class="title"><?=$data['messages'][$i]['category']?> / <?=$data['messages'][$i]['rank']?></p>
+            </td>
+            <td class="subject">
+                <div class="author">
+                    <span>Вопрос задан: <?=$date?> в <?=$time?> </span>
+                </div>
+                <a href="/user/messages/inview/<?=$data['messages'][$i]['id']?>" class="title"><span class="bold"><?=htmlspecialchars_decode($data['messages'][$i]['text'])?></span></a>
+                <a href="/user/messages/inview/<?=$data['messages'][$i]['id']?>" class="<?=$class_ask?>"><?=$title_ask?></a>
+                <a href="/user/messages/indelete/<?=$data['messages'][$i]['id']?>" onclick="return confirmDelete();" class="link-delete-simple">Удалить</a>
+            </td>
+        </tr>
+        <?php endfor; ?>
+        <?php endif; ?>
+    </table>
+    <?php if(Session::hasFlash('nodata')): ?>
+    <div class="notice">
+        <p><?php Session::flash('nodata'); ?></p>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>

@@ -1,10 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="block-forum">
+    <h3>Мои темы </h3>
+    <table class="table table-bordered">
+        <tr class="thead">
+            <td class="category">
+                <p class="title">Категор./Специальность</p>
+            </td>
+            <td class="subject">
+                <p class="title">Тема</p>
+            </td>
+            <td class="answer">
+                <p class="title">Ответов</p>
+            </td>
+            <td class="view">
+                <p class="title">Просмотров</p>
+            </td>
+        </tr>
+        <?php for($i=0;$i<count($data['topics']);$i++):?>
+        <?php
+            $id_topic = $data['topics'][$i]['id'];
+            $category = $data['topics'][$i]['category'];
+            $rank = $data['topics'][$i]['rank'];
+            $subject = $data['topics'][$i]['subject'];
+            $text = $data['topics'][$i]['text'];
+            $date_data = $data['topics'][$i]['date'];
+            $date_array = explode(' ', $date_data);
+            $date = $date_array[0];
+            $time = substr($date_array[1], 0, -3);
+            $firstname = $data['topics'][$i]['firstname'];
+            $lastname = $data['topics'][$i]['lastname'];
+            $answers = $data['topics'][$i]['answers'];
+            $views = 0;
+            for($j=0;$j<count($data['views']);$j++){
+                if($data['views'][$j]['topic_id'] == $id_topic) {
+                    $views = $data['views'][$j]['views'];
+                    break;
+                }
+            }
+        ?>
+        <tr class="tbody">
+            <td class="category">
+                <p class="title"><?="$category/$rank"?></p>
+            </td>
+            <td class="subject">
+                <div class="author">
+                    <span>Тема создана: <?="$date в $time"?> </span>
+                </div>
+                <a href="/topics/view/1/<?=$id_topic?>" class="sub"><p class="title-subject"><?=$subject?></p></a>
+                <a href="/topics/view/1/<?=$id_topic?>" class="link-view">Просмотреть</a>
+                <a href="/topics/delete/<?=$id_topic?>" onclick="return confirmDelete();"  class="link-delete-simple">Удалить</a>
+            </td>
+            <td class="answer">
+                <p class="title"><?=$answers?></p>
+            </td>
+            <td class="view">
+                <p class="title"><?=$views?></p>
+            </td>
+        </tr>
+        <?php endfor; ?>
+    </table>
+    <?php if(Session::hasFlash('nodata')): ?>
+    <div class="notice">
+        <?php Session::flash('nodata'); ?>
+    </div>
+    <?php endif; ?>
+</div>
+<?php if($data['count_topics'] > 5): ?>
+<div class="block-pagination">
+    <nav aria-label="Page navigation" class="page-navigation">
+        <ul class="pagination">
+
+            <?php if($data['page'] != 1): ?>
+            <li>
+                <a href="<?=$data['link_previous']?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <?php
+                $count_items = 0;
+                for($i=$data['page_start'];$i<=$data['count_pages'];$i++):
+                $link = "/topics/my/$i/"; ?>
+            <li><a href="<?=$link?>" <?php if($i == $data['page']) echo "class='active'" ?>> <?=$i?> </a></li>
+            <?php
+                $count_items++;
+                if($count_items%5===0) break;
+                endfor;
+            ?>
+
+            <?php if($data['page'] != $data['count_pages']): ?>
+            <li>
+                <a href="<?=$data['link_next']?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
+<?php endif; ?>

@@ -1,10 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td class="td-id">
+            ID
+        </td>
+        <td class="td-date">
+            Имя
+        </td>
+        <td class="td-date">
+            Email
+        </td>
+        <td>
+            Тема сообщения
+        </td>
+        <td>
+            Текст сообщения
+        </td>
+        <td class="td-date">
+            Дата
+        </td>
+        <td class="td-date">
+            Действие
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['messages']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['messages'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['name']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['email']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['subject']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['text']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['date']?>
+        </td>
+        <td class="td-action">
+            <a href="/admin/feedback/answer/<?=$data['messages'][$i]['id']?>" class="btn btn-primary">Ответить</a>
+            <a href="/admin/feedback/delete/<?=$data['messages'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <script>
+                function confirmDelete() {
+                    if (confirm("Вы подтверждаете удаление?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>

@@ -1,10 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['admin_user'])): ?>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <p><?php Session::flash('nodata'); ?></p>
+</div>
+<?php endif; ?>
+<?php if(!empty($data['messages'])): ?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td class="td-id">
+            ID
+        </td>
+        <td class="td-cat">
+            Отправитель
+        </td>
+        <td class="td-rank">
+            Категория
+        </td>
+        <td class="td-rank">
+            Специальность
+        </td>
+        <td class="td-text">
+            Текст
+        </td>
+        <td class="td-date">
+            Дата
+        </td>
+        <td class="td-user">
+            Получатели
+        </td>
+        <td class="td-action">
+            Действие
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php for($i=0;$i<count($data['messages']);$i++): ?>
+    <tr>
+        <td>
+            <?=$data['messages'][$i]['id']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['lastname']?> <?=$data['messages'][$i]['firstname']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['category']?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['rank']?>
+        </td>
+        <td>
+            <?=htmlspecialchars_decode($data['messages'][$i]['text'])?>
+        </td>
+        <td>
+            <?=$data['messages'][$i]['date']?>
+        </td>
+        <td>
+            <?php
+                $str = $data['messages'][$i]['users'];
+                $array = explode(', ', $str);
+            ?>
+            <?php for($j=0;$j<count($array);$j++): ?>
+            <?php for($k=0;$k<count($data['users']);$k++) {
+                if($data['users'][$k]['id'] == $array[$j]){
+                    $firstname = $data['users'][$k]['firstname'];
+                    $lastname = $data['users'][$k]['lastname'];
+                    break;
+                }
+            } ?>
+            <a href="/admin/users/statistic/<?=$array[$j]?>" title="<?=$lastname?> <?=$firstname?>"><?=$array[$j]?></a>
+            <?php endfor; ?>
+        </td>
+        <td class="td-action">
+            <a href="/admin/moderationmessages/public/<?=$data['messages'][$i]['id']?>" onclick="return confirmPublic();" class="btn btn-info">Опубликовать</a>
+            <a href="/admin/moderationmessages/edit/<?=$data['messages'][$i]['id']?>" class="btn btn-primary">Редактировать</a>
+            <a href="/admin/moderationmessages/delete/<?=$data['messages'][$i]['id']?>" onclick="return confirmDelete();"  class="btn btn-danger">Удалить</a>
+            <script>
+                function confirmPublic() {
+                    if (confirm("Вы подтверждаете публикацию темы?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                function confirmDelete() {
+                    if (confirm("Вы подтверждаете удаление?")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <?php endfor; ?>
+    </tbody>
+</table>
+<?php endif; ?>
+<?php endif; ?>

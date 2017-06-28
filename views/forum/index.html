@@ -1,10 +1,262 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<script>
+    function onPopupClose(){
+        Cookies.set('colorbox', 'yes', { expires: 10 });
+    }
+
+    function displayPopup(){
+        $.colorbox({
+            html: "<div id='subscribe'>" +
+            "<h2>Как насчет подписки на интересные темы???</h2>" +
+            "<p>Все что нужно, только Ваше имя, email <br>и категория которая Вам интересна!</p>" +
+            "<form action='/forum/subscribe' method='post'>" +
+            "<div class='group'>" +
+            "<label>" +
+            "Категория" +
+            "</label>" +
+            "<br>" +
+            "<select name='category'>" +
+            "<?php for($i=0;$i<count($data['categories']);$i++): ?>" +
+            "<option value=\"<?=$data['categories'][$i]['id']?>\"><?=$data['categories'][$i]['category']?></option>" +
+            "<?php endfor; ?>" +
+            "</select>" +
+            "</div>" +
+            "<div class='group'>" +
+            "<label for='name'>" +
+            "Имя" +
+            "</label>" +
+            "<br>" +
+            "<input type='text' name='name' id='name' required maxlength='255' placeholder='Введите ваше имя'/>" +
+            "</div>" +
+            "<div class='group'>" +
+            "<label for='email'>" +
+            "Email" +
+            "</label>" +
+            "<br>" +
+            "<input type='email' name='email' id='email' required maxlength='255' placeholder='email@example.com'/>" +
+            "</div>" +
+            "<div class='group'>" +
+            "<input type='submit' value='Оформить'/>" +
+            "</div>" +
+            "</form>" +
+            "</div>",
+            className: "subscribe",
+            width: 550,
+            height: 450,
+            onClosed: onPopupClose
+        });
+    }
+    setTimeout(function(){
+        var popupShown = Cookies.get('colorbox');
+
+        if(!popupShown){
+            displayPopup();
+        }
+    }, 5000);
+</script>
+<div class="search">
+    <form action='/forum/index/1/search/' method="post">
+        <input type="text" name='words' id="tags" <?php if(isset($_POST['send_search'])): ?> value="<?=$_POST['words']?>" <?php endif; ?> placeholder="Введите категорию, специальность или название темы..."/>
+        <input type="submit" name='send_search' value='Go!'/>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        $( function() {
+
+            var availableTags = [
+                <?=$data['auto_str']?>
+            ];
+            $( "#tags" ).autocomplete({
+                source: availableTags
+            });
+        } );
+    });
+</script>
+<div class="btn-new-subject">
+    <a href="/topics/newtopic/">+ Создать тему</a>
+</div>
+<div class="clear"></div>
+<div class="category">
+    <form action="/forum/index/1/sort/" method="post">
+        <table>
+            <tr>
+                <td>
+                    <label for="category">
+                        Выбрать категорию
+                    </label>
+                </td>
+                <td>
+                    <label for="rank">
+                        Выбрать специальность
+                    </label>
+                </td>
+                <td>
+                    <label for="sort">
+                        Сортировка вывода
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select id='category' name="category">
+                        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                        <option value="<?=$data['categories'][$i]['id']?>"><?=$data['categories'][$i]['category']?></option>
+                        <?php endfor; ?>
+                    </select>
+                </td>
+                <td>
+                    <select id='rank' name="rank">
+
+                    </select>
+                </td>
+                <td>
+                    <select id='sort' name="sort">
+                        <option value="0">Последние темы</option>
+                        <option value="1">Популярные темы</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="submit" name='send_sort' value="Искать"/>
+                </td>
+            </tr>
+            <script>
+                $('#rank').change(function(){
+                    var id = $('#rank').val();
+                    if(id == 0){
+                        $('.input-rank').css('display', '');
+                    } else {
+                        $('.input-rank').css('display', 'none');
+                    }
+                })
+            </script>
+            <tr class="input-rank" style="display: none;">
+            <td></td>
+            <td>
+            <input type="text" name='user_rank' maxlength="255" placeholder="Введите специальность"/>
+            </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="block-forum">
+    <?php $params = App::getRouter()->getParams();
+    if(isset($_SESSION['sort'])&&!empty($params[1])&&$params[1] == 'sort'): ?>
+        <h3><?=$data['title_sort']?> <span>/</span> <?=$data['title_category']?> <span>/</span> <?=$data['title_rank']?></h3>
+    <?php else: ?>
+        <h3>Поcледние темы </h3>
+    <?php endif; ?>
+    <table class="table table-bordered">
+        <tr class="thead">
+            <td class="category">
+                <p class="title">Категор./Специальность</p>
+            </td>
+            <td class="subject">
+                <p class="title">Тема/Автор</p>
+            </td>
+            <td class="answer">
+                <p class="title">Ответов</p>
+            </td>
+            <td class="view">
+                <p class="title">Просмотров</p>
+            </td>
+        </tr>
+        <?php if(!empty($data['topics'])): ?>
+        <?php for($i=0;$i<count($data['topics']);$i++):?>
+        <?php
+            $user_id = $data['topics'][$i]['user_id'];
+            $topic_id = $data['topics'][$i]['id'];
+            $category = $data['topics'][$i]['category'];
+            $rank = $data['topics'][$i]['rank'];
+            $subject = $data['topics'][$i]['subject'];
+            $email = $data['topics'][$i]['email'];
+
+            $date_data = $data['topics'][$i]['date'];
+            $date_array = explode(' ', $date_data);
+            $date = $date_array[0];
+            $time = substr($date_array[1], 0, -3);
+            $firstname = $data['topics'][$i]['firstname'];
+            $lastname = $data['topics'][$i]['lastname'];
+            $answers = $data['topics'][$i]['answers'];
+            $views = 0;
+            for($j=0;$j<count($data['views']);$j++){
+                if($data['views'][$j]['topic_id'] == $topic_id) {
+                    $views = $data['views'][$j]['views'];
+                    break;
+                }
+            }
+
+        ?>
+        <tr class="tbody">
+            <td class="category">
+                <p class="title"><?="$category/$rank"?></p>
+            </td>
+            <td class="subject">
+                <div class="author">
+                    <span>Автор: <span class="bold">
+                        <?php if(!empty($email)): ?>
+                        <a href="/specialists/view/<?=$user_id?>"><?="$lastname $firstname"?></a>
+                        <?php else: ?>
+                        <?="$lastname $firstname"?>
+                        <?php endif; ?>
+                    </span></span>
+                    <span><span class="glyphicon glyphicon-time"></span><?="$date в $time"?> </span>
+                </div>
+                <a href="/forum/view/1/<?=$topic_id?>" class="sub"><p class="title-subject"><?=$subject?></p></a>
+            </td>
+            <td class="answer">
+                <p class="title"><?=$answers?></p>
+            </td>
+            <td class="view">
+                <p class="title"><?=$views?></p>
+            </td>
+        </tr>
+        <?php endfor; ?>
+        <?php endif; ?>
+    </table>
+    <?php if(Session::hasFlash('nodata')): ?>
+    <div class="notice">
+        <?php Session::flash('nodata'); ?>
+    </div>
+    <?php endif; ?>
+</div>
+<div class="clear"></div>
+<?php if($data['count_topics'] > 10): ?>
+<div class="block-pagination">
+    <nav aria-label="Page navigation" class="page-navigation">
+        <ul class="pagination">
+
+            <?php if($data['page'] != 1): ?>
+            <li>
+                <a href="<?=$data['link_previous']?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <?php
+                $count_items = 0;
+                for($i=$data['page_start'];$i<=$data['count_pages'];$i++):
+                if(isset($_SESSION['sort'])&&!empty($params[1])&&$params[1] == 'sort') {
+                    $link = "/forum/index/$i/sort";
+                } elseif(isset($_SESSION['search'])&&!empty($params[1])&&$params[1] == 'search'){
+                    $link = "/forum/index/$i/search";
+                } else $link = "/forum/index/$i/";
+            ?>
+                <li><a href="<?=$link?>" <?php if($i == $data['page']) echo "class='active'" ?>> <?=$i?> </a></li>
+            <?php
+                $count_items++;
+                if($count_items%5===0) break;
+                endfor;
+            ?>
+
+            <?php if($data['page'] != $data['count_pages']): ?>
+            <li>
+                <a href="<?=$data['link_next']?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
+<?php endif; ?>

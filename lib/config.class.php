@@ -1,7 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: орпр
- * Date: 22.05.2017
- * Time: 11:28
- */
+
+class Config
+{
+    protected static $settings = [];
+
+    public static function get($key)
+    {
+        return isset(self::$settings[$key]) ? self::$settings[$key] : null;
+    }
+
+    public static function set($key, $value)
+    {
+       self::$settings[$key] = $value;
+    }
+}

@@ -1,14 +1,10 @@
 <?php
 
-class RegUser extends Model{
+class modelRegistration extends Model{
 
     public function getCategories(){
-        $sql = 'SELECT * FROM `db_category`';
-        return $this->db->query($sql);
-    }
-
-    public function getRanks($cat_id){
-        $sql = "SELECT * FROM `db_rank` WHERE `cat_id` = $cat_id";
+        $sql = 'SELECT * FROM `db_category`
+                ORDER BY `category`';
         return $this->db->query($sql);
     }
 

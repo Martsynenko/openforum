@@ -1,66 +1,120 @@
-<div class="error">
-    <p><span>Внимание!</span> Вы зашли как незарегистрированный пользователь! Все ваши созданные темы будут действовать в течении 24 часов. После истечении этого времени ваши темы удаляются. Для комфортной работы зарегистрируйтесь на форуме.</p>
-</div>
 <div class="specialist category">
     <h2>Специалисты open<span>Forum</span> </h2>
-    <form class="specialist-category">
+    <form action="/specialists/index/1/sort/" method='post' class="specialist-category">
         <table>
             <tr>
                 <td>
-                    <label>
+                    <label for="category">
                         Выбирите категорию
+                    </label>
+                </td>
+                <td>
+                    <label for="rank">
+                        Выбирите специальность
                     </label>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select>
-                        <option>Кулинария</option>
+                    <select name="category" id="category">
+                        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                        <option value="<?=$data['categories'][$i]['id']?>"
+                        <?php if($_POST&&$_POST['category'] == $data['categories'][$i]['id']): ?>
+                        selected
+                        <?php endif; ?>>
+                            <?=$data['categories'][$i]['category']?></option>
+                        <?php endfor; ?>
                     </select>
+                </td>
+                <td>
+                    <select name="rank" id="rank">
+
+                    </select>
+                </td>
+                <td>
+                    <input type="submit" value="Искать"/>
+                </td>
+            </tr>
+            <script>
+                $('#rank').change(function(){
+                    var id = $('#rank').val();
+                    if(id == 0){
+                        $('.input-rank').css('display', '');
+                    } else {
+                        $('.input-rank').css('display', 'none');
+                    }
+                })
+            </script>
+            <tr class="input-rank" style="display: none;">
+                <td></td>
+                <td>
+                    <input type="text" name='user_rank' maxlength="255" placeholder="Введите специальность"/>
                 </td>
             </tr>
         </table>
     </form>
-    <div class="specialist-item">
-        <img src="images/admin_images/no-avatar.jpg" alt="avatar"/>
-        <a href="#"><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
+    <?php if(Session::hasFlash('nodata')): ?>
+    <div class="notice">
+        <?php Session::flash('nodata'); ?>
     </div>
-    <div class="specialist-item">
-        <img src="images/admin_images/no-avatar.jpg" alt="avatar"/>
-        <a href="#"><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
-    </div>
-    <div class="specialist-item">
-        <img src="images/admin_images/no-avatar.jpg" alt="avatar"/>
-        <a href="#"><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
-    </div>
-    <div class="specialist-item">
-        <img src="images/admin_images/no-avatar.jpg" alt="avatar"/>
-        <a href="#"><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
-    </div>
-    <div class="specialist-item">
-        <img src="images/admin_images/no-avatar.jpg" alt="avatar"/>
-        <a href="#"><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
-    </div>
-    <div class="specialist-item">
-        <img src="images/admin_images/4img.jpg" alt="avatar"/>
-        <a href=""><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
-    </div>
-    <div class="specialist-item">
-        <img src="images/admin_images/4img.jpg" alt="avatar"/>
-        <a href="#"><h3>Gavagn Fuskd</h3></a>
-        <p class="rank">web-developer</p>
-        <p class="city">Одесса</p>
-    </div>
+    <?php endif; ?>
+    <?php for($i=0;$i<count($data['topics']);$i++):?>
+    <?php
+        $count = 0;
+        $spec_id = $data['topics'][$i]['id'];
+        $rank = $data['topics'][$i]['rank'];
+        $firstname = $data['topics'][$i]['firstname'];
+        $lastname = $data['topics'][$i]['lastname'];
+        $city = $data['topics'][$i]['city'];
+    ?>
+        <a href="/specialists/view/<?=$spec_id?>">
+        <div class="specialist-item">
+            <img src="<?=$data['topics'][$i]['avatar']?>" alt="avatar"/>
+            <div class="specialist-item-info">
+                <a href="/specialists/view/<?=$spec_id?>"><h3><?="$firstname $lastname"?></h3></a>
+                <p class="rank"><?=$rank?></p>
+                <p class="city"><?=$city?></p>
+            </div>
+        </div>
+        </a>
+    <?php endfor; ?>
 </div>
+<?php if($data['count_topics'] > 20): ?>
+<div class="clear"></div>
+<div class="block-pagination">
+    <nav aria-label="Page navigation" class="page-navigation">
+        <ul class="pagination">
+
+            <?php if($data['page'] != 1): ?>
+            <li>
+                <a href="<?=$data['link_previous']?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <?php
+                $count_items = 0;
+                for($i=$data['page_start'];$i<=$data['count_pages'];$i++):
+                if(isset($_SESSION['sort'])&&!empty($params[1])&&$params[1] == 'sort') {
+                    $link = "/specialists/index/$i/sort";
+                } else $link = "/specialists/index/$i/";
+            ?>
+            <li><a href="<?=$link?>" <?php if($i == $data['page']) echo "class='active'" ?>> <?=$i?> </a></li>
+            <?php
+                $count_items++;
+                if($count_items%5===0) break;
+                endfor;
+            ?>
+
+            <?php if($data['page'] != $data['count_pages']): ?>
+            <li>
+                <a href="<?=$data['link_next']?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
+<?php endif; ?>

@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<?php if(isset($_SESSION['auth_user'])): ?>
+<div class="new_subject registration">
+    <h2>Редактирование Вашей специальности</h2>
+    <?php if(Session::hasFlash('update')): ?>
+    <div class="notice">
+        <p><?php Session::flash('update'); ?></p>
+    </div>
+    <?php endif; ?>
+    <div class="category">
+        <form action='/user/profile/rank/' method='post'>
+            <table>
+                <tr>
+                    <td>
+                        Категория <select id='category' name='category' class="select-category">
+                        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+                        <option value="<?=$data['categories'][$i]['id']?>"><?=$data['categories'][$i]['category']?></option>
+                        <?php endfor; ?>
+                    </select>
+                        <br>
+                        Специальность <select id='rank' name='rank'>
+
+                    </select>
+                        <script>
+                            $('#rank').change(function(){
+                                var id = $('#rank').val();
+                                if(id == 0){
+                                    $('.input-rank').css('display', '');
+                                } else {
+                                    $('.input-rank').css('display', 'none');
+                                }
+                            })
+                        </script>
+                        <input type="text" name='user_rank' class='input-rank' style='display: none;' placeholder="Введите свою специальность"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-btn">
+                        <input type="submit" name='send_reg' value="Редактировать"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<?php endif; ?>

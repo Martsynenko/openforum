@@ -1,10 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="форум, специалисты, задать, вопрос, совет, узнать, поиск, ответы, кулинария, юридические, программистов"/>
+    <meta name="description" content="openForum - самый быстрый способ узнать совет у специалистов. Форум для всех категорий профессий и любых специальностей."/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Форум для поиска советов</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link href="/css/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Khula" rel="stylesheet">
+
+    <!-- include libraries(jQuery, bootstrap) -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+
+    <!-- include summernote css/js-->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Khula" rel="stylesheet">-->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/summernote.min.js"></script>
+    <script src="/js/lang/summernote-ru-RU.js"></script>
+    <script src="/js/script.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.2.1.js"></script>-->
+
+    <!-- Плавное открыте пагинации -->
+
+    <!-- Автозаполнение -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function(){
+            var id = $('#category').val();
+            $.ajax({
+                type: 'POST',
+                url: '/select.php',
+                data: 'id_category='+id,
+                success: function(data) {
+                    $('#rank').html(data);
+                }
+            });
+            $('#category').change(function(){
+                var id = $('#category').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/select.php',
+                    data: 'id_category='+id,
+                    success: function(data) {
+                        $('#rank').html(data);
+                    }
+                });
+            });
+        });
+        $(function(){
+            var id = $('#month').val();
+            $.ajax({
+                type: 'POST',
+                url: '/select.php',
+                data: 'id_month='+id,
+                success: function(data) {
+                    $('#day').html(data);
+                }
+            });
+            $('#month').change(function(){
+                var id = $('#month').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/select.php',
+                    data: 'id_month='+id,
+                    success: function(data) {
+                        $('#day').html(data);
+                    }
+                });
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/jackmoore/colorbox/master/example1/colorbox.css" />
+    <script src="https://cdn.rawgit.com/jackmoore/colorbox/master/jquery.colorbox-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.3/js.cookie.min.js"></script>
 </head>
 <body>
-$END$
+<div id="header">
+    <table>
+        <tr>
+            <td>
+                <a href="/"><h1>open<span>Forum</span></h1></a>
+            </td>
+            <td>
+                <div class="auth">
+                    <form action="/auth/" method="post">
+                    <input type="email" name="email" required maxlength="255" placeholder="Ваше email">
+                    <input type="password" name="password" required maxlength="50" placeholder="Ваш пароль">
+                    <input type="submit" value="Войти">
+                    </form>
+                    <a href="/registration/" class="reg">Регистрация</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id='wrapp'>
+    <div id="side-bar">
+        <div class="avatar">
+            <img src="<?=Config::get('avatar')?>" alt="avatar"/>
+        </div>
+        <div class="menu">
+            <h3>Личный кабинет</h3>
+            <ul>
+                <li>
+                    <a href="/forum/" <?php if(App::getRouter()->getController() == 'forum'&&App::getRouter()->getAction() == 'index') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Главная</a>
+                </li>
+                <li>
+                    <a href="/topics/newtopic/" <?php if((App::getRouter()->getController() == 'topics')&&App::getRouter()->getAction() == 'new') { ?> class='active' <?php } ?> >+ Создать тему</a>
+                </li>
+                <li>
+                    <a href="" class="no-active">+ Разослать вопрос</a>
+                </li>
+                <li>
+                    <a href="/topics/my/" <?php if((App::getRouter()->getController() == 'topics')&&App::getRouter()->getAction() == 'my') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Мои темы<span class="badge"><?=Session::get('count_topics')?></span></a>
+                </li>
+                <li>
+                    <a href="" class="no-active"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Мои сообщения</a>
+                </li>
+                <li>
+                    <a href="" class="no-active"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Мои специалисты</a>
+                </li>
+                <li>
+                    <a href="" class="no-active"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Редактировать инфо</a>
+                </li>
+            </ul>
+        </div>
+        <div class="menu">
+            <h3>Общее</h3>
+            <ul>
+                <li>
+                    <a href="/forum/" <?php if(App::getRouter()->getController() == 'forum'&&App::getRouter()->getAction() == 'index') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Форум</a>
+                </li>
+                <li>
+                    <a href="/specialists/" <?php if(App::getRouter()->getController() == 'specialists') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Специалисты</a>
+                </li>
+                <li>
+                    <a href="/forum/about/" <?php if(App::getRouter()->getController() == 'forum'&&App::getRouter()->getAction() == 'about') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>Что такое openForum</a>
+                </li>
+                <li>
+                    <a href="/forum/feedback/" <?php if(App::getRouter()->getController() == 'forum'&&App::getRouter()->getAction() == 'feedback') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>Обратная связь</a>
+                </li>
+                <li>
+                    <a href="/subscribe/" <?php if(App::getRouter()->getController() == 'forum'&&App::getRouter()->getAction() == 'subscribe') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>Оформить подписку</a>
+                </li>
+            </ul>
+        </div>
+        <div id="footer">
+            <p>&copy; 2017 openForum.com.ua</p>
+            <p>All Rights Reserved</p>
+        </div>
+    </div>
+    <div id="content">
+        <?php if(Session::get('wrong_auth')): ?>
+        <div class="warning">
+            <p><?=Session::get('wrong_auth'); ?></p>
+        </div>
+        <?php unset($_SESSION['wrong_auth']); ?>
+        <?php endif; ?>
+        <?php if(Session::get('ban_user')): ?>
+        <div class="warning">
+            <p><?=Session::get('ban_user'); ?></p>
+        </div>
+        <?php unset($_SESSION['ban_user']); ?>
+        <?php endif; ?>
+        <div class="error">
+            <p><span class="red">Внимание!</span> Вы зашли как незарегистрированный пользователь! Вам было присвоено произвольное имя <span class="bold"><?=Session::get('firstname')?></span>, чтобы Вы могли создавать темы, а также отвечать на вопросы. Все Ваши созданные темы будут опубликованы в течении 24 часов. После истечении этого времени Ваши темы, а также все ваши ответы удаляются. Для комфортной работы зарегистрируйтесь на форуме.</p>
+        </div>
+        <?= $data['content'] ?>
+    </div>
+</div>
 </body>
 </html>

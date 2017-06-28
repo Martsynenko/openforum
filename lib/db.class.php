@@ -1,7 +1,44 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: орпр
- * Date: 24.05.2017
- * Time: 11:36
- */
+
+class DB{
+
+    protected $connection;
+
+    public function __construct($host, $user, $password, $db_name)
+    {
+        $this->connection = new mysqli($host, $user, $password, $db_name);
+
+        $this->connection->query('SET NAMES UTF8');
+
+        if(mysqli_connect_error()){
+            throw new Exception('No connect');
+        }
+    }
+
+    public function query($sql){
+        if(!$this->connection){
+            return false;
+        }
+
+        $result = $this->connection->query($sql);
+
+        if(mysqli_error($this->connection)){
+            throw new Exception('No data');
+        }
+
+        if(is_bool($result)){
+            return $result;
+        }
+
+        $data = [];
+        while($row = mysqli_fetch_assoc($result)){
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
+    public function escape($str){
+        return mysqli_escape_string($this->connection, $str);
+    }
+}
