@@ -3,7 +3,8 @@
 class modelTopic extends Model{
 
     public function getCategories(){
-        $sql = 'SELECT * FROM `db_category`';
+        $sql = 'SELECT * FROM `db_category`
+                ORDER BY `category`';
         return $this->db->query($sql);
     }
 
@@ -38,7 +39,7 @@ class modelTopic extends Model{
     }
 
     public function getUserTopic($topic_id){
-        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar`, `email`, `city`, `db_topics`.* FROM `db_topics`
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar`, `email`, `db_users`.`rank_id`, `city`, `db_topics`.* FROM `db_topics`
                 JOIN `db_users`
                 ON(`db_topics`.user_id = `db_users`.id)
                 JOIN `db_category`
@@ -52,9 +53,11 @@ class modelTopic extends Model{
     public function getAnswers($page, $topic_id){
         $first_topic = $page * 5 - 5;
         $count_topic = 5;
-        $sql = "SELECT `db_users`.`firstname`, `db_users`.`lastname`, `db_users`.`avatar`, `email`, `city`, `db_topics_answers`.* FROM `db_topics_answers`
+        $sql = "SELECT `db_rank`.`rank`, `db_users`.`firstname`, `db_users`.`lastname`, `db_users`.`avatar`, `email`, `city`, `db_topics_answers`.* FROM `db_topics_answers`
                 JOIN `db_users`
                 ON(`db_topics_answers`.user_id = `db_users`.id)
+                JOIN `db_rank`
+                ON(`db_rank`.`id` = `db_users`.`rank_id`)
                 WHERE `db_topics_answers`.`topic_id` = '$topic_id'
                 ORDER BY `db_topics_answers`.date DESC
                 LIMIT $first_topic, $count_topic";
@@ -118,6 +121,13 @@ class modelTopic extends Model{
                 WHERE `rank` = '$user_rank'";
         $data = $this->db->query($sql);
         return $data[0]['id'];
+    }
+
+    public function getTitleUserRank($user_rank){
+        $sql = "SELECT `rank` FROM `db_rank`
+                WHERE `id` = '$user_rank'";
+        $data = $this->db->query($sql);
+        return $data[0]['rank'];
     }
 
     public function checkIssetRank($rank){

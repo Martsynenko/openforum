@@ -1,39 +1,51 @@
 <?php if(isset($_SESSION['auth_user'])): ?>
-<div class="block-forum">
-    <h3>Мои сообщения </h3>
-    <table class="table table-bordered">
-        <tr class="thead-menu">
-            <td colspan="4">
-                <a href="/user/messages/outbox/"
-                <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'outbox'): ?>
-                    class='btn-category-active'
-                <?php else: ?>
-                    class="btn-category"
-                <?php endif; ?>>
-                Мои вопросы <span class="badge"><?=$data['count_outbox']?></span></a>
-                <a href="/user/messages/inbox/"
-                <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'inbox'): ?>
-                class='btn-category-active'
-                <?php else: ?>
-                class="btn-category"
-                <?php endif; ?>>
-                Вопросы мне <span class="badge"><?=$data['count_inbox']?></span></a>
-            </td>
-        </tr>
+<div class="block-message" <?php if(Session::hasFlash('nodata')): ?> style='padding-bottom: 0;' <?php endif; ?>>
+<h3><?=Session::get('firstname')?>, у Вас
+    <?php if(!empty($data['count_messages'])): ?>
+    <?=$data['count_messages']?> сообщений
+    <?php else: ?>
+    нет сообщений
+    <?php endif; ?>
+</h3>
+<div class="header-menu">
+    <a href="/">На главную</a>
+    <a href="/user/messages/outbox/"
+    <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'outbox'): ?>
+    class='active-sort'
+    <?php endif; ?>
+    >Мои вопросы (<?=$data['count_outbox']?>)</a>
+    <a href="/user/messages/inbox/"
+    <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'inbox'): ?>
+    class='active-sort'
+    <?php endif; ?>
+    >Вопросы мне (<?=$data['count_inbox']?>)</a>
+    <a href="<?=$data['prev_uri']?>">На предыдущую страницу</a>
+</div>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <?php Session::flash('nodata'); ?>
+</div>
+<?php endif; ?>
+<?php if(!empty($data['messages'])): ?>
+<div class="table-topics">
+    <table class="table">
+        <thead>
         <tr class="thead">
             <td class="category">
-                <p class="title">Категор./Специальность</p>
+                <p class="title">Категор./Специал.</p>
             </td>
             <td class="subject">
                 <p class="title">Вопрос</p>
             </td>
-            <td class="answer">
+            <td class="answers">
                 <p class="title">Получили</p>
             </td>
-            <td class="view">
+            <td class="views">
                 <p class="title">Ответов</p>
             </td>
         </tr>
+        </thead>
+        <tbody>
         <?php for($i=0;$i<count($data['messages']);$i++): ?>
         <?php
             $date_data = $data['messages'][$i]['date'];
@@ -45,31 +57,28 @@
             $count = count($array);
             $answers = $data['messages'][$i]['answers'];
         ?>
-        <tr class="tbody">
-            <td class="category">
-                <p class="title"><?=$data['messages'][$i]['category'].'/'.$data['messages'][$i]['rank']?></p>
+        <tr>
+            <td class="section">
+                <p><?=$data['messages'][$i]['category']?> / <?=$data['messages'][$i]['rank']?></p>
             </td>
             <td class="subject">
                 <div class="author">
                     <span>Вопрос задан: <?=$date?> в <?=$time?> </span>
                 </div>
-                <a href="/user/messages/outview/<?=$data['messages'][$i]['id']?>" class="title"><span class="bold"><?=htmlspecialchars_decode($data['messages'][$i]['text'])?></span></a>
+                <a href="/user/messages/outview/<?=$data['messages'][$i]['id']?>" class="sub"><h4><?=htmlspecialchars_decode($data['messages'][$i]['text'])?></h4></a>
                 <a href="/user/messages/outview/<?=$data['messages'][$i]['id']?>" class="link-view">Просмотреть</a>
                 <a href="/user/messages/outdelete/<?=$data['messages'][$i]['id']?>" onclick="return confirmDelete();"  class="link-delete-simple">Удалить</a>
             </td>
-            <td class="answer">
-                <p class="title"><?=$count?></p>
+            <td class="answers">
+                <span><?=$count?></span>
             </td>
-            <td class="view">
-                <p class="title"><?=$answers?></p>
+            <td class="views">
+                <span><?=$answers?></span>
             </td>
         </tr>
         <?php endfor; ?>
+        </tbody>
     </table>
-    <?php if(Session::hasFlash('nodata')): ?>
-    <div class="notice">
-        <p><?php Session::flash('nodata'); ?></p>
-    </div>
-    <?php endif; ?>
 </div>
+<?php endif; ?>
 <?php endif; ?>

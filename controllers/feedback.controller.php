@@ -11,7 +11,7 @@ class FeedbackController extends Controller
 
     public function admin_index(){
 
-        /* Получаю все сообщения */
+        /* Получаю все сообщения отправленные пользователями в службу поддержки */
 
         $this->data['messages'] = $this->model->getAllFeedbackMessages();
     }
@@ -24,6 +24,7 @@ class FeedbackController extends Controller
 
         $this->data['message_id'] = $message_id;
 
+        // Получаю данные отправителя
         $data = $this->model->getMessageInfo($message_id);
         $name = $data[0]['name'];
         $email = $data[0]['email'];
@@ -39,6 +40,7 @@ class FeedbackController extends Controller
             $message = htmlspecialchars($message, ENT_QUOTES);
             $message = stripcslashes($message);
 
+            // Отправляю письмо пользователю
             $mail = new PHPMailer(false);
             $mail->isSMTP();
             $mail->Host = Config::get('smtp_host');

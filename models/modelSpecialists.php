@@ -182,18 +182,20 @@ class modelSpecialists extends Model{
         $sql = "SELECT `specialists` FROM `db_user_specialists`
                 WHERE `user_id` = '$user_id'";
         $data = $this->db->query($sql);
-        $str = $data[0]['specialists'];
-        if(!empty($str)){
-            $sql = "SELECT `db_rank`.`rank`, COUNT(`user_id`) as sub, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar` FROM `db_users` 
+        if(!empty($data)){
+            $str = $data[0]['specialists'];
+            if(!empty($str)){
+                $sql = "SELECT `db_rank`.`rank`, COUNT(`user_id`) as sub, `db_users`.`id` as user_id, `firstname`, `lastname`, `avatar` FROM `db_users` 
                     JOIN `db_rank`
                     ON(`db_users`.`rank_id` = `db_rank`.`id`)
                     LEFT JOIN `db_topics`
                     ON(`db_topics`.`user_id` = `db_users`.`id`)
                     WHERE `db_users`.`id` IN($str)
                     GROUP BY `db_users`.`id`";
-            return $this->db->query($sql);
-        } else {
-            return false;
+                return $this->db->query($sql);
+            } else {
+                return false;
+            }
         }
     }
 

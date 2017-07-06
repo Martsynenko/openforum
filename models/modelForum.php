@@ -2,6 +2,12 @@
 
 class modelForum extends Model{
 
+    public function getCountTopicsSection(){
+        $sql = "SELECT `cat_id`, COUNT(`id`) as count FROM `db_topics`
+                GROUP BY `cat_id`";
+        return $this->db->query($sql);
+    }
+
     public function checkVisit($ip, $date){
         $sql = "SELECT `id` FROM `db_visits`
                 WHERE `ip_address` = '$ip' AND `date` = '$date'";
@@ -205,9 +211,9 @@ class modelForum extends Model{
                 foreach ($text_array as &$word_text){
                     //$word_text = mb_strtolower($word_text);
                     $lev = levenshtein($word, $word_text);
-                    if($lev == 0||$lev<=4){
+                    if($lev == 0||$lev<=2){
                         $id_array[] = $data[$i]['id'];
-                        $word_text = "<span class=\"search-word\">$word_text</span>";
+                        $word_text = "<span class='search-word'>$word_text</span>";
                     }
                 }
                 $text = implode(' ', $text_array);
@@ -218,9 +224,9 @@ class modelForum extends Model{
                 foreach ($text_array as &$word_text){
                     //$word_text = mb_strtolower($word_text);
                     $lev = levenshtein($word, $word_text);
-                    if($lev == 0||$lev<=4){
+                    if($lev == 0||$lev<=2){
                         $id_array[] = $data[$i]['id'];
-                        $word_text = "<span class=\"search-word\">$word_text</span>";
+                        $word_text = "<span class='search-word'>$word_text</span>";
                     }
                 }
                 $text = implode(' ', $text_array);
@@ -233,7 +239,7 @@ class modelForum extends Model{
                     $lev = levenshtein($word, $word_text);
                     if($lev == 0||$lev<=2){
                         $id_array[] = $data[$i]['id'];
-                        $word_text = "<span class=\"search-word\">$word_text</span>";
+                        $word_text = "<span class='search-word'>$word_text</span>";
                     }
                 }
                 $text = implode(' ', $text_array);
@@ -344,6 +350,164 @@ class modelForum extends Model{
 
 
 
+    /* FORUM SECTION */
+
+    public function getCountTopicsBySection($cat_id){
+        $sql = "SELECT COUNT(`id`) as count FROM `db_topics`
+                WHERE `cat_id` = '$cat_id'";
+        $data = $this->db->query($sql);
+        return $data[0]['count'];
+    }
+
+    public function getCountMessagesBySection($cat_id){
+        $sql = "SELECT COUNT(`topic_id`) as count FROM `db_topics_answers`
+                JOIN `db_topics`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `cat_id` = '$cat_id'";
+        $data = $this->db->query($sql);
+        if(!empty($data)){
+            return $data[0]['count'];
+        }
+    }
+
+    public function getCountUsersBySection($cat_id){
+        $sql = "SELECT COUNT(`id`) as count FROM `db_users`
+                WHERE `db_users`.`cat_id` = '$cat_id' AND `db_users`.`email` != ''";
+        $data = $this->db->query($sql);
+        return $data[0]['count'];
+    }
+
+    public function getRanksBySection($cat_id){
+        $sql = "SELECT `id`, `rank` FROM `db_rank`
+                WHERE `cat_id` = '$cat_id'
+                ORDER BY `rank`";
+        return $this->db->query($sql);
+    }
+
+    public function getTopicsBySection($page, $cat_id){
+        $first_topic = $page * 10 - 10;
+        $count_topic = 10;
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as `user_id`, `firstname`, `lastname`, `email`, COUNT(`topic_id`) as answers, `db_topics`.* FROM `db_topics`
+                JOIN `db_users`
+                ON(`db_topics`.user_id = `db_users`.id)
+                JOIN `db_category`
+                ON(`db_topics`.`cat_id` = `db_category`.`id`)
+                JOIN `db_rank`
+                ON(`db_topics`.`rank_id` = `db_rank`.`id`)
+                LEFT JOIN `db_topics_answers`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `db_topics`.`cat_id` = '$cat_id'
+                GROUP BY `db_topics`.`id`
+                ORDER BY `db_topics`.date DESC
+                LIMIT $first_topic, $count_topic";
+        return $this->db->query($sql);
+    }
+
+    public function getTopicsBySectionSort($page, $cat_id){
+        $first_topic = $page * 10 - 10;
+        $count_topic = 10;
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as `user_id`, `firstname`, `lastname`, `email`, COUNT(`topic_id`) as answers, `db_topics`.* FROM `db_topics`
+                JOIN `db_users`
+                ON(`db_topics`.user_id = `db_users`.id)
+                JOIN `db_category`
+                ON(`db_topics`.`cat_id` = `db_category`.`id`)
+                JOIN `db_rank`
+                ON(`db_topics`.`rank_id` = `db_rank`.`id`)
+                LEFT JOIN `db_topics_answers`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `db_topics`.`cat_id` = '$cat_id'
+                GROUP BY `db_topics`.`id`
+                ORDER BY answers DESC
+                LIMIT $first_topic, $count_topic";
+        return $this->db->query($sql);
+    }
+
+    public function getIDTopicsBySection($cat_id){
+        $sql = "SELECT `db_topics`.`id` FROM `db_topics`
+                WHERE `cat_id` = '$cat_id'
+                ORDER BY `db_topics`.`date` DESC";
+        return $this->db->query($sql);
+    }
+
+    public function getIDTopicsBySectionSort($cat_id){
+        $sql = "SELECT `db_topics`.`id`, COUNT(`topic_id`) as answers FROM `db_topics`
+                LEFT JOIN `db_topics_answers`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `cat_id` = '$cat_id'
+                GROUP BY `db_topics`.`id`
+                ORDER BY answers DESC";
+        return $this->db->query($sql);
+    }
+
+    public function getIDTopicsByRanks($ranks){
+        $sql = "SELECT `id` FROM `db_topics`
+                WHERE `db_topics`.`rank_id` IN($ranks)
+                ORDER BY `db_topics`.date DESC";
+        return $this->db->query($sql);
+    }
+
+    public function getIDTopicsByRanksSort($ranks){
+        $sql = "SELECT `db_topics`.`id`, COUNT(`topic_id`) as answers FROM `db_topics`
+                LEFT JOIN `db_topics_answers`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `db_topics`.`rank_id` IN($ranks)
+                GROUP BY `db_topics`.`id`
+                ORDER BY answers DESC";
+        return $this->db->query($sql);
+    }
+
+    public function getRanksByID($str){
+        $sql = "SELECT `id`, `rank` FROM `db_rank`
+                WHERE `id` IN($str)";
+        return $this->db->query($sql);
+    }
+
+    public function getTopicsByRanks($page, $ranks){
+        $first_topic = $page * 10 - 10;
+        $count_topic = 10;
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as `user_id`, `firstname`, `lastname`, `email`, COUNT(`topic_id`) as answers, `db_topics`.* FROM `db_topics`
+                JOIN `db_users`
+                ON(`db_topics`.user_id = `db_users`.id)
+                JOIN `db_category`
+                ON(`db_topics`.`cat_id` = `db_category`.`id`)
+                JOIN `db_rank`
+                ON(`db_topics`.`rank_id` = `db_rank`.`id`)
+                LEFT JOIN `db_topics_answers`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `db_topics`.`rank_id` IN($ranks)
+                GROUP BY `db_topics`.`id`
+                ORDER BY `db_topics`.date DESC
+                LIMIT $first_topic, $count_topic";
+        return $this->db->query($sql);
+    }
+
+    public function getTopicsByRanksSort($page, $ranks){
+        $first_topic = $page * 10 - 10;
+        $count_topic = 10;
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as `user_id`, `firstname`, `lastname`, `email`, COUNT(`topic_id`) as answers, `db_topics`.* FROM `db_topics`
+                JOIN `db_users`
+                ON(`db_topics`.user_id = `db_users`.id)
+                JOIN `db_category`
+                ON(`db_topics`.`cat_id` = `db_category`.`id`)
+                JOIN `db_rank`
+                ON(`db_topics`.`rank_id` = `db_rank`.`id`)
+                LEFT JOIN `db_topics_answers`
+                ON(`db_topics`.`id` = `db_topics_answers`.`topic_id`)
+                WHERE `db_topics`.`rank_id` IN($ranks)
+                GROUP BY `db_topics`.`id`
+                ORDER BY `answers` DESC
+                LIMIT $first_topic, $count_topic";
+        return $this->db->query($sql);
+    }
+
+    public function getCountTopicsByRanks($ranks){
+        $sql = "SELECT COUNT(`id`) as count FROM `db_topics`
+                WHERE `rank_id` IN($ranks)";
+        $data = $this->db->query($sql);
+        return $data[0]['count'];
+    }
+
+
     /* FORUM VIEW */
 
     public function setAnswer($user_id, $topic_id, $date, $answer){
@@ -353,7 +517,7 @@ class modelForum extends Model{
     }
 
     public function getUserTopic($topic_id){
-        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as `user_id`, `firstname`, `lastname`, `avatar`, `city`, `email`, `db_topics`.* FROM `db_topics`
+        $sql = "SELECT `db_category`.`category`, `db_rank`.`rank`, `db_users`.`id` as `user_id`, `firstname`, `lastname`, `avatar`, `city`, `email`, `db_users`.`rank_id` as user_rank, `db_topics`.* FROM `db_topics`
                 JOIN `db_users`
                 ON(`db_topics`.user_id = `db_users`.id)
                 JOIN `db_category`
@@ -364,12 +528,21 @@ class modelForum extends Model{
         return $this->db->query($sql);
     }
 
+    public function getUserRank($user_rank){
+        $sql = "SELECT `rank` FROM `db_rank`
+                WHERE `id` = '$user_rank'";
+        $data = $this->db->query($sql);
+        return $data[0]['rank'];
+    }
+
     public function getAnswers($page, $topic_id){
         $first_topic = $page * 5 - 5;
         $count_topic = 5;
-        $sql = "SELECT `db_users`.`firstname`, `db_users`.`lastname`, `db_users`.`avatar`, `city`, `email`, `db_topics_answers`.* FROM `db_topics_answers`
+        $sql = "SELECT `db_users`.`firstname`, `db_users`.`lastname`, `db_users`.`avatar`, `city`, `email`, `db_rank`.`rank`, `db_topics_answers`.* FROM `db_topics_answers`
                 JOIN `db_users`
                 ON(`db_topics_answers`.user_id = `db_users`.id)
+                JOIN `db_rank`
+                ON(`db_rank`.`id` = `db_users`.`rank_id`)
                 WHERE `db_topics_answers`.`topic_id` = '$topic_id'
                 ORDER BY `db_topics_answers`.date DESC
                 LIMIT $first_topic, $count_topic";

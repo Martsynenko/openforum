@@ -24,7 +24,9 @@ class AuthController extends Controller{
             $password = $password.Config::get('salt');
             $password = md5($password);
 
-            if($email == 'ialek@mail.ua' && $password == 'b6e40e522c9a6e2ed2aacf269590baeb'){
+            // Проверяю значения полей авторизации
+            // Первая ветка - вход в Админ панель
+            if($email == 'ialek@example.com' && $password == 'b6e40e522c9a6e2ed2aacf269590baeb'){
                 Session::delete('rand_user');
                 Session::set('admin_user', Config::get('salt'));
                 $data = $this->model->getUserData($email, $password);
@@ -32,10 +34,13 @@ class AuthController extends Controller{
                 Session::set('firstname', $data['firstname']);
                 Session::set('lastname', $data['lastname']);
                 Router::redirect('/admin/');
-            } elseif ($this->model->checkIssetUser($email, $password)){
+
+            // Вторая ветка - зарегистрированный пользователь
+            } elseif ($this->model->checkIssetUser($email, $password)) {
                 $data = $this->model->getUserData($email, $password);
                 $user_id = $data['id'];
-                if($this->model->checkBanUser($user_id)){
+                // Проверяю не был ли забанен пользователь
+                if ($this->model->checkBanUser($user_id)) {
                     Session::set('ban_user', '<span class="bold red">Ошибка!</span> Ваш аккаунт был заблокирован. Для восстановления Вашего аккаунта обратитесь в службу поддержки.');
                     Router::redirect('/');
                 } else {
@@ -45,24 +50,26 @@ class AuthController extends Controller{
                     Session::set('firstname', $data['firstname']);
                     Session::set('lastname', $data['lastname']);
                     Session::set('avatar', $data['avatar']);
+                    Session::set('user_rank', $data['rank']);
 
+                    // Подсчитываю занчения количество тем, сообщей, добавленных специалистов пользователя(для меню)
                     $count_topics = $this->model->countTopics($user_id);
-                    if(empty($count_topics)) $count_topics = '0';
+                    if (empty($count_topics)) $count_topics = '0';
                     Session::set('count_topics', $count_topics);
 
                     $count_messages = $this->model->countMessages($user_id);
-                    if(empty($count_messages)) $count_messages = '0';
+                    if (empty($count_messages)) $count_messages = '0';
                     Session::set('count_messages', $count_messages);
 
                     $count_specialists = $this->model->countSpecialists($user_id);
-                    if(!$count_specialists) $count_specialists = '0';
+                    if (!$count_specialists) $count_specialists = '0';
                     Session::set('count_specialists', $count_specialists);
 
-                    /* Уведичиваю количество посещений */
+                    /* Уведичиваю количество посещений данного пользователя (для статистики в Админ панели) */
 
                     $this->model->updateCountVisits($user_id);
 
-                    /* Начинаю отсчет времени проведения на форуме*/
+                    /* Начинаю отсчет времени проведения на форуме (также для статистики в Админ панели)*/
 
                     $time = time();
                     Session::set('time_start', $time);
@@ -77,6 +84,7 @@ class AuthController extends Controller{
         }
     }
 
+    // Метод восстановления пароля
     public function recovery(){
 
         if($_POST){
@@ -86,6 +94,7 @@ class AuthController extends Controller{
             $email = htmlspecialchars($email, ENT_QUOTES);
             $email = stripcslashes($email);
 
+            // Проверяю, зарегистрирован ли данный email
             if($this->model->checkIssetEmail($email)){
 
                 $data = $this->model->getUserNameByEmail($email);
@@ -96,6 +105,7 @@ class AuthController extends Controller{
                 Session::set('email', $email);
                 Session::set('code', $code);
 
+                // Отправляю письмо с кодом для подтверждения email
                 $mail = new PHPMailer(false);
                 $mail->isSMTP();
                 $mail->Host = Config::get('smtp_host');
@@ -183,6 +193,7 @@ class AuthController extends Controller{
 
         $time_end = time();
         $time = $time_end - Session::get('time_start');
+        // Обновляю время проведенное на сайте зарегистрированного пользователя (для статистики)
         $this->model->updateTimeVisit($user_id, $time);
 
         session_destroy();

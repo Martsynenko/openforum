@@ -50,7 +50,9 @@ class modelAuth extends Model{
     }
 
     function getUserData($email, $password){
-        $sql = "SELECT * FROM `db_users`
+        $sql = "SELECT `db_rank`.`rank`, `db_users`.* FROM `db_users`
+                JOIN `db_rank`
+                ON(`db_rank`.`id` = `db_users`.`rank_id`)
                 WHERE `email` = '$email' AND `password` = '$password'";
         $data = $this->db->query($sql);
         return $data[0];

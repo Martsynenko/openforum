@@ -2,6 +2,7 @@
     <h3>Тема создана: <?=$data['date']?></h3>
     <div class="header-menu">
         <a href="/">На главную</a>
+        <a href="<?=$data['prev_uri']?>">На предыдущую страницу</a>
         <a href="/topics/my/">Мои темы</a>
         <?php if(!empty($data['btn_prev'])): ?>
         <a href="<?=$data['btn_prev']?>">Предыдущая тема</a>
@@ -26,6 +27,7 @@
             <?php endif; ?>
             <p class="user"><?=$position?></p>
             <?php if(!empty($email)): ?>
+            <p class="user-rank"><?=$data['user_rank']?></p>
             <p class="city"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$data['city']?></p>
             <?php endif; ?>
         </div>
@@ -35,7 +37,7 @@
                 <span class="date">Специальность: <span class="bold"> <?=$data['rank']?></span></span>
                 <span class="date">Просмотров: <span class="bold"><?=$data['views']?></span></span>
             </div>
-            <p class="subject">Тема: <?=$data['subject']?></p>
+            <h1 class="subject">Тема: <?=$data['subject']?></h1>
             <p class="text"><?=htmlspecialchars_decode($data['text'])?></p>
         </div>
         <div class="clear"></div>
@@ -71,6 +73,7 @@
             <?php endif; ?>
             <p class="user"><?=$position?></p>
             <?php if(!empty($email)): ?>
+            <p class="user-rank"><?=$data['answers'][$i]['rank']?></p>
             <p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$city?></p>
             <?php endif; ?>
         </div>

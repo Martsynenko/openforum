@@ -1,7 +1,7 @@
 <?php
 
-$mysqli = new mysqli('localhost', 'root', '', 'db_openforum');
-//$mysqli = new mysqli('localhost', 'openforu_Aleksandr', 'martsynenko1989', 'openforu_db_openforum');
+//$mysqli = new mysqli('localhost', 'root', '', 'db_openforum');
+$mysqli = new mysqli('localhost', 'openforu_Aleksandr', 'martsynenko1989', 'openforu_db_openforum');
 $mysqli->query('SET NAMES UTF8');
 
 if(isset($_POST['id_category'])){

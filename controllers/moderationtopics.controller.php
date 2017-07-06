@@ -39,6 +39,7 @@ class ModerationTopicsController extends Controller
             $firstname = $data[0]['firstname'];
             $lastname = $data[0]['lastname'];
 
+            // Отправляю уведомление о успешно пройденной модерации темы
             $mail = new PHPMailer(false);
             $mail->isSMTP();
             $mail->Host = Config::get('smtp_host');
@@ -75,6 +76,7 @@ class ModerationTopicsController extends Controller
         $this->model->insertTopic($cat_id, $rank_id, $title, $text, $date, $user_id);
         $topic_id_public = $this->model->getTopicID($user_id, $title, $text);
 
+        // Отправляю всем позователям уведомление о новой теме, которые оформляли подписку на данну юкатегорию
         $users = $this->model->getUsersForMail($cat_id);
         if(!empty($users)){
             $category = $this->model->getCategoryByID($cat_id);
@@ -153,6 +155,7 @@ class ModerationTopicsController extends Controller
         $firstname = $data[0]['firstname'];
         $lastname = $data[0]['lastname'];
 
+        // Отправляю письмо о том что тема не прошла модерацию
         $mail = new PHPMailer(false);
         $mail->isSMTP();
         $mail->Host = Config::get('smtp_host');

@@ -39,6 +39,8 @@ class ModerationMessagesController extends Controller
         $firstname = $data[0]['firstname'];
         $lastname = $data[0]['lastname'];
 
+        // Отправляю письмо пользователю о том что вопрос прошел модерацию и отправлен всем указаным спецалистам
+
         $mail = new PHPMailer(false);
         $mail->isSMTP();
         $mail->Host = Config::get('smtp_host');
@@ -69,6 +71,8 @@ class ModerationMessagesController extends Controller
         $text = $data['text'];
         $date = $data['date'];
         $users = $data['users'];
+
+        // Добавляю сообщение в таблицу с сообщениями и удаляю с таблицы модерации
 
         $this->model->insertMessage($user_id, $cat_id, $rank_id, $text, $date, $users);
 
@@ -114,6 +118,7 @@ class ModerationMessagesController extends Controller
         $firstname = $data[0]['firstname'];
         $lastname = $data[0]['lastname'];
 
+        // Отправляю письмо о том что вопрос не прошел модерацию
         $mail = new PHPMailer(false);
         $mail->isSMTP();
         $mail->Host = Config::get('smtp_host');

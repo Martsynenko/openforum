@@ -10,7 +10,7 @@ class ForumController extends Controller {
 
     public function index(){
 
-        /* Записываю посещение */
+        /* Записываю посещение уникальное посещение (один IP адрес в один день = одно уникальное посещение)*/
 
         $date = date('Y:m:d');
         $ip = $_SERVER["REMOTE_ADDR"];
@@ -19,17 +19,21 @@ class ForumController extends Controller {
             $this->model->insertVisit($ip, $date);
         }
 
-        /* Удаляю просроченых пользователей */
+        /* Удаляю просроченых пользователей (незарегистрированных) после истечении 24 часов с начала записи */
+
         $time = time();
         $this->model->deleteExpiredUsers($time);
 
         /* Создаю нового случайного пользователя*/
+
         if(isset($_SESSION['auth_user'])){
             unset($_SESSION['rand_user']);
         } elseif(!isset($_SESSION['rand_user'])){
+            // Выбираю произвольное имя для случайного пользователя
             $names = ['Adriegelv', 'Grafyn', 'Nilv', 'Darkredeemer', 'Dawnflame', 'Shalira', 'Faektilar', 'Lanaya', 'Nikora', 'Kelenis', 'Bladeweaver', 'Buzadwyn', 'Thordilas', 'Zulkigrel', 'Anarador'];
             $key_name = array_rand($names);
             $name = $names[$key_name];
+            // Записываю имя и время(timestart и timeend) случайного пользователя, по истечении которого удалятся все его темы и ответы
             $time_start = time();
             $time_end = $time_start + 86400;
             $this->model->insertRandUser($name, $time_start, $time_end);
@@ -40,18 +44,29 @@ class ForumController extends Controller {
             Session::set('rand_user', $name);
             Session::set('count_topics', '0');
         } else {
+            // Проверяю не просрочен ли данный случайный пользователь
             $time = time();
             $id = Session::get('id');
+            // Если просрочен, удаляю все его записи и перенаправляю на главную страницу для создания нового случайного пользователя
             if($this->model->checkExpiredUser($id, $time)){
                 unset($_SESSION['rand_user']);
                 Router::redirect('/');
             }
         }
 
-        /*Формирую данные для select */
+        /*Формирую данные для select (категории) (специальности формируются динамически в файле select.php)*/
         $this->data['categories'] = $this->model->getCategories();
 
+        /* Формирую данные для разделов (количество тем)*/
+        $this->data['section_info'] = $this->model->getCountTopicsSection();
+
         $params = App::getRouter()->getParams();
+
+        // Если параметров нет(параметры поиска или сортировки или нумерация всех тем с главной страници) - вывод списка категорий на главной странице
+        if(empty($params)){
+            Session::delete('sort');
+            Session::delete('search');
+        }
 
         if(!empty($params[0])){
             $page = $params[0];
@@ -59,18 +74,27 @@ class ForumController extends Controller {
             $page = 1;
         }
 
-        /*Проверка, вывод по умолчанию или сортировка */
+        /* Проверяю был ли отправлен POST с поиском или сортировкой */
         if(isset($_POST['send_sort'])){
             $rank = $_POST['rank'];
+            // Проверяю если пользователь выбрал 'Другая специальность'
             if($rank == 0){
                 $user_rank = $_POST['user_rank'];
+                // Проверяю есть данная специальность в базе
+                // Если есть, то выбирается она, если нет выведится сообщений что тем нет
+                // ВСЕ СПЕЦИАЛЬНОСТИ ВВЕДЕННЫЕ В ПОЛЕ 'Другая специальность' ДОБАВЛЯЮТСЯ В БАЗУ ТОЛЬКО ПРИ РЕГИСТРАЦИИ,
+                // ВО ВСЕХ ОСТАЛЬНЫХ СЛУЧАЯ ПРОВЕРЯЕТСЯ ТОЛЬКО СОВПАДЕНИЕ
                 $data = $this->model->checkIssetRank($user_rank);
                 if(!empty($data)){
                     $rank = $data[0]['id'];
                 }
             }
+            // Записываю в Сессию данные сортировки
+            // (нужно для корректного вывода списка темы при переходе на другие страницы)
             $_SESSION['sort'] = [$_POST['category'], $rank, $_POST['sort']];
         } elseif (isset($_POST['send_search'])){
+            // Записываю в Сессию данные сортировки
+            // (нужно для корректного вывода списка темы при переходе на другие страницы)
             $_SESSION['search'] = $_POST['words'];
         }
 
@@ -78,11 +102,14 @@ class ForumController extends Controller {
         $rank = null;
         $sort = null;
         $words = null;
+        // Проверяю данные для вывода тем (тоисть был ли ранее отправлен запрос на сортировку или поиск)
         if(isset($_SESSION['sort'])&&!empty($params[1])&&$params[1] == 'sort') {
             $cat = $_SESSION['sort'][0];
             $rank = $_SESSION['sort'][1];
             $sort = $_SESSION['sort'][2];
             $this->data['topics'] = $this->model->getTopicsSort($page, $cat, $rank, $sort);
+            // Извлекаю ID всех тем сортировки и записываю в Сессию
+            // (требуется для формирования ссылок кнопок "Следущая тема" и "Предыдущая тема" на странице просмотра темы (forum/view/...))
             $array_data = $this->model->getIDTopicsSort($cat, $rank, $sort);
             $array_id = [];
             for($i=0;$i<count($array_data);$i++){
@@ -90,6 +117,15 @@ class ForumController extends Controller {
             }
             Session::set('topics_id', $array_id);
         } elseif(isset($_SESSION['search'])&&!empty($params[1])&&$params[1] == 'search') {
+            /* Поиск был написан в ручную и работает по следующему принципу:
+            Перебираются все слова введенные пользователем и ищется совпадение при помощи встроенной функции Levenshtein
+            с такими записями как Категория, Специальность и Тема.
+            Сам поиск происходит в два этапа:
+            1. Извлекаю все ID тем c найденными словами и записываю в Сессию
+            (для правильного вывода при пагинации и для формирования (ссылок аналогично сортировки))
+            2. Снова перебираю все слова с поиска, но уже с отфильтрованных ID тем
+            (нужно для выделения найденного слова)
+            */
             $words = $_SESSION['search'];
             $array_id = $this->model->getIDTopicsSearch($words);
             if(!$array_id){
@@ -100,6 +136,8 @@ class ForumController extends Controller {
                 Session::set('topics_id', $array_id);
             }
         } else {
+            // Если же ни поиска, ни сортировки не было, тогда вывод тем по умолчанию,
+            // тоисть по убыванию по дате, и также записываю ID тем в сессию
             $this->data['topics'] = $this->model->getTopics($page);
             $array_data = $this->model->getIDTopics();
             $array_id = [];
@@ -113,11 +151,12 @@ class ForumController extends Controller {
             Session::setFlash('nodata', '<span class="bold">К сожалению нет тем по данному запросу.</span> Вы можете быть первым! Для этого перейдите в раздел <a href="/topics/newtopic/">Создать тему</a>. Или выбирите другую категорию или специальность. Также можете воспользоваться поиском для поиска тем.');
         }
 
-        /* Получаю данные просмотров */
+        /* Получаю данные просмотров каждой темы (данные ответов формируются при извлечении самих тем)*/
 
         $this->data['views'] = $this->model->getCountViews();
 
         /* Формирую pagination*/
+
         $count_topics = null;
         $page_previous = $page-1;
         $page_next = $page+1;
@@ -135,6 +174,7 @@ class ForumController extends Controller {
             $count_topics = $this->model->countTopics();
         }
 
+        // Вывод тем - по 10 на страницу
         $count_pages = $count_topics/10;
         if(is_float($count_pages)) {
             $count_pages = $count_pages + 1;
@@ -161,6 +201,8 @@ class ForumController extends Controller {
         }
 
         /* Формирую данные для autocomplete поиска */
+        // Autocomplete формируется динамически, тоисть все добавленнные категории, специальности или темы
+        // будут автоматически добавляться в autocomplte
         $auto_category = $this->model->getCategories();
         $auto_str = '';
         for($i=0;$i<count($auto_category);$i++){
@@ -178,7 +220,142 @@ class ForumController extends Controller {
         $this->data['auto_str'] = $str;
     }
 
+    public function section(){
+
+        // Все ссылки в данной разделе формируются по следующему принципу:
+        // 1 параметр - это страница
+        // 2 параметр - это раздел
+        // 3 параметр - rank, а за ним id специальностей
+        // последним параметром может быть sort (сортировка по популярности(по количеству ответов))
+
+        $params = App::getRouter()->getParams();
+        $page = $params[0];
+        $section = $params[1];
+        $str_ranks = '';
+
+        // Формирую ссылки для добавления специальностей в сортировке вывода
+        if(!isset($params[2])||($params[2]) != 'rank'){
+            $this->data['link_add_rank'] = "/forum/section/1/$section/rank";
+        // Если уже выбраны какие то специальности, тогда извлекаю названия специальностей и формирую ссылки для сортировки и добавления других специальностей
+        } elseif(isset($params[2])&&$params[2] == 'rank') {
+            $data = [];
+            for($i=3;$i<count($params);$i++){
+                if($params[$i] != 'sort'&&$params[$i] != 'last'){
+                    $data[] = $params[$i];
+                }
+            }
+            $this->data['ranks_id'] = $data;
+            $str_ranks = implode(', ', $data);
+            $this->data['ranks_title_id'] = $this->model->getRanksByID($str_ranks);
+            $link_rank = implode('/', $data);
+            $this->data['link_rank'] = $link_rank;
+            $this->data['link_add_rank'] = "/forum/section/1/$section/rank/$link_rank";
+            $this->data['link_sort'] = "/forum/section/1/$section/rank/$link_rank/sort";
+            $this->data['link_last'] = "/forum/section/1/$section/rank/$link_rank/";
+        }
+
+        for($i=0;$i<count($params);$i++){
+            if($params[$i] == 'sort'){
+                $this->data['sort'] = 'sort';
+                break;
+            } else {
+                $this->data['sort'] = 'last';
+            }
+        }
+
+        $this->data['section'] = $section;
+        // Получаю все данные раздела (кол. тем, сообщений, специалистов, специальности)
+        $this->data['section_title'] = $this->model->getTitleCategory($section);
+        $this->data['count_topic'] = $this->model->getCountTopicsBySection($section);
+        $this->data['count_message'] = $this->model->getCountMessagesBySection($section);
+        $this->data['count_user'] = $this->model->getCountUsersBySection($section);
+        $this->data['ranks'] = $this->model->getRanksBySection($section);
+
+        // Получаю все темы, учитывая выбранные специальности и сортировку
+        if(isset($params[2])&&$params[2] == 'rank') {
+            if($this->data['sort'] == 'sort'){
+                $this->data['topics'] = $this->model->getTopicsByRanksSort($page, $str_ranks);
+                $array_data = $this->model->getIDTopicsByRanksSort($str_ranks);
+            } else {
+                $this->data['topics'] = $this->model->getTopicsByRanks($page, $str_ranks);
+                $array_data = $this->model->getIDTopicsByRanks($str_ranks);
+            }
+            $array_id = [];
+            for($i=0;$i<count($array_data);$i++){
+                $array_id[] = $array_data[$i]['id'];
+            }
+            Session::set('topics_id', $array_id);
+        } else {
+            if($this->data['sort'] == 'sort'){
+                $this->data['topics'] = $this->model->getTopicsBySectionSort($page, $section);
+                $array_data = $this->model->getIDTopicsBySectionSort($section);
+            } else {
+                $this->data['topics'] = $this->model->getTopicsBySection($page, $section);
+                $array_data = $this->model->getIDTopicsBySection($section);
+            }
+            $array_id = [];
+            for($i=0;$i<count($array_data);$i++){
+                $array_id[] = $array_data[$i]['id'];
+            }
+            $this->data['link_sort'] = "/forum/section/1/$section/sort";
+            $this->data['link_last'] = "/forum/section/1/$section/";
+            Session::set('topics_id', $array_id);
+        }
+
+        if(empty($this->data['topics'])){
+            Session::setFlash('nodata', '<span class="bold">К сожалению нет тем по данному запросу.</span> Вы можете быть первым! Для этого перейдите в раздел <a href="/topics/newtopic/">Создать тему</a>. Или выбирите другую категорию или специальность. Также можете воспользоваться поиском для поиска тем.');
+        }
+
+        /* Получаю данные просмотров */
+
+        $this->data['views'] = $this->model->getCountViews();
+
+        /* Формирую pagination*/
+        $count_topics = null;
+        $page_previous = $page-1;
+        $page_next = $page+1;
+        if(isset($params[2])&&$params[2] == 'rank'){
+            if($this->data['sort'] == 'sort'){
+                $link_previous = "/forum/section/$page_previous/$section/rank/$str_ranks/sort";
+                $link_next = "/forum/section/$page_next/$section/rank/$str_ranks/sort";
+            } else {
+                $link_previous = "/forum/section/$page_previous/$section/rank/$str_ranks";
+                $link_next = "/forum/section/$page_next/$section/rank/$str_ranks";
+            }
+            $count_topics = $this->model->getCountTopicsByRanks($str_ranks);
+        } else {
+            if($this->data['sort'] == 'sort'){
+                $link_previous = "/forum/section/$page_previous/$section/sort";
+                $link_next = "/forum/section/$page_next/$section/sort";
+            } else {
+                $link_previous = "/forum/section/$page_previous/$section";
+                $link_next = "/forum/section/$page_next/$section";
+            }
+            $count_topics = $this->model->getCountTopicsBySection($section);
+        }
+
+        $count_pages = $count_topics/10;
+        if(is_float($count_pages)) {
+            $count_pages = $count_pages + 1;
+            $count_pages = (integer)$count_pages;
+        }
+        if($page>=3){
+            $page_start = $page-2;
+        } else $page_start = 1;
+
+        $this->data['count_topics'] = $count_topics;
+        $this->data['page'] = $page;
+        $this->data['link_previous'] = $link_previous;
+        $this->data['link_next'] = $link_next;
+        $this->data['count_pages'] = $count_pages;
+        $this->data['page_start'] = $page_start;
+
+    }
+
     public function view(){
+
+        // Получаю для формирования ссылки кнопки 'Предыдущая страница'
+        $this->data['prev_uri'] = $_SERVER['HTTP_REFERER'];
 
         $params = App::getRouter()->getParams();
 
@@ -190,7 +367,7 @@ class ForumController extends Controller {
 
         $topic_id = $params[1];
 
-        /* Количество просмотров */
+        /* Увеличиваю количество просмотров */
 
         $visitor_ip = $_SERVER['REMOTE_ADDR'];
         $date = date('Y-m-d');
@@ -200,6 +377,7 @@ class ForumController extends Controller {
 
         /* Проверяю на отправление сообщения с формы */
 
+        // Если был отправлен комментарий на чей то ответ
         if($_POST&&isset($_POST['comment'])) {
 
             $answer = trim($_POST['answer']);
@@ -226,6 +404,7 @@ class ForumController extends Controller {
 
             $this->model->insertAnswerComment($topic_id, $answer_id, $firstname, $lastname, $date_answer, $text);
 
+            // Если это обычный ответ на тему
         } elseif($_POST){
 
             $answer = trim($_POST['answer']);
@@ -249,6 +428,8 @@ class ForumController extends Controller {
         $this->data['lastname'] = $this->data['topics'][0]['lastname'];
         $this->data['avatar'] = $this->data['topics'][0]['avatar'];
         $this->data['city'] = $this->data['topics'][0]['city'];
+        $user_rank = $this->data['topics'][0]['user_rank'];
+        $this->data['user_rank'] = $this->model->getUserRank($user_rank);
         $this->data['email'] = $this->data['topics'][0]['email'];
         if(empty($this->data['avatar'])) $this->data['avatar'] = Config::get('avatar');
         $date_data = $this->data['topics'][0]['date'];
@@ -297,7 +478,7 @@ class ForumController extends Controller {
         $this->data['page_start'] = $page_start;
         $this->data['link_action'] = "/forum/view/$page/$topic_id";
 
-        /* Формирую кнопки prev и next*/
+        /* Формирую кнопки Следущая тема и Предыдущая тема*/
         $topics_id = Session::get('topics_id');
         $current_key = array_keys($topics_id, $topic_id);
         $current_key = $current_key[0];
@@ -348,7 +529,7 @@ class ForumController extends Controller {
                 $date = date('Y:m:d H:i:s');
 
                 $this->model->insertFeedback($firstname, $email, $subject, $text, $date);
-                Session::setFlash('notice', "<b>$firstname</b>, Ваше сообщение успешно отправлено администрации сайта openForum. В ближайшее время мы его обработаем и ответим на Ваши вопросы.");
+                Session::setFlash('notice', "<span class='bold'>$firstname, Ваше сообщение успешно отправлено администрации сайта openForum.</span> В ближайшее время мы его обработаем и ответим на Ваши вопросы.");
             }
         }
     }

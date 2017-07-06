@@ -1,34 +1,45 @@
 <?php if(isset($_SESSION['auth_user'])): ?>
-<div class="block-forum">
-    <h3>Мои сообщения </h3>
-    <table class="table table-bordered">
-        <tr class="thead-menu">
-            <td colspan="4">
-                <a href="/user/messages/outbox/"
-                <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'outbox'): ?>
-                class='btn-category-active'
-                <?php else: ?>
-                class="btn-category"
-                <?php endif; ?>>
-                Мои вопросы <span class="badge"><?=$data['count_outbox']?></span></a>
-                <a href="/user/messages/inbox/"
-                <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'inbox'): ?>
-                class='btn-category-active'
-                <?php else: ?>
-                class="btn-category"
-                <?php endif; ?>>
-                Вопросы мне <span class="badge"><?=$data['count_inbox']?></span></a>
-            </td>
-        </tr>
+<div class="block-message" <?php if(Session::hasFlash('nodata')): ?> style='padding-bottom: 0;' <?php endif; ?>>
+<h3><?=Session::get('firstname')?>, у Вас
+    <?php if(!empty($data['count_messages'])): ?>
+    <?=$data['count_messages']?> сообщений
+    <?php else: ?>
+    нет сообщений
+    <?php endif; ?>
+</h3>
+<div class="header-menu">
+    <a href="/">На главную</a>
+    <a href="/user/messages/outbox/"
+    <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'outbox'): ?>
+    class='active-sort'
+    <?php endif; ?>
+    >Мои вопросы (<?=$data['count_outbox']?>)</a>
+    <a href="/user/messages/inbox/"
+    <?php if(App::getRouter()->getController() == 'messages'&&App::getRouter()->getAction() == 'inbox'): ?>
+    class='active-sort'
+    <?php endif; ?>
+    >Вопросы мне (<?=$data['count_inbox']?>)</a>
+    <a href="<?=$data['prev_uri']?>">На предыдущую страницу</a>
+</div>
+<?php if(Session::hasFlash('nodata')): ?>
+<div class="notice">
+    <?php Session::flash('nodata'); ?>
+</div>
+<?php endif; ?>
+<?php if(!empty($data['messages'])): ?>
+<div class="table-topics">
+    <table class="table">
+        <thead>
         <tr class="thead">
             <td class="category">
-                <p class="title">Категор./Специальность</p>
+                <p class="title">Категор./Специал.</p>
             </td>
             <td class="subject">
                 <p class="title">Вопрос</p>
             </td>
         </tr>
-        <?php if($data['messages']): ?>
+        </thead>
+        <tbody>
         <?php for($i=0;$i<count($data['messages']);$i++): ?>
         <?php
             $date_data = $data['messages'][$i]['date'];
@@ -44,7 +55,7 @@
                 }
             }
         ?>
-        <tr class="tbody">
+        <tr>
             <td>
                 <p class="title"><?=$data['messages'][$i]['category']?> / <?=$data['messages'][$i]['rank']?></p>
             </td>
@@ -58,12 +69,8 @@
             </td>
         </tr>
         <?php endfor; ?>
-        <?php endif; ?>
+        </tbody>
     </table>
-    <?php if(Session::hasFlash('nodata')): ?>
-    <div class="notice">
-        <p><?php Session::flash('nodata'); ?></p>
-    </div>
-    <?php endif; ?>
 </div>
+<?php endif; ?>
 <?php endif; ?>

@@ -16,6 +16,8 @@ class ProfileController extends Controller{
 
         $address = $_SERVER['HTTP_REFERER'];
 
+        // Для обрезки изобрадений использую библиотеку WideImage
+
         if($_POST){
 
             $max_size =  1258291; //1.2Мбайт
@@ -183,7 +185,7 @@ class ProfileController extends Controller{
         $this->data['user'] = $this->model->getUserInfo($user_id);
         $firstname = $this->data['user']['firstname'];
 
-        Session::setFlash('notice', "<span class='bold'>$firstname, Ваши данные успешно редактированы.</span> Если у Вас есть жалобы или предложения к нам, Вы всегда можете обратиться в <a href='/forum/feedback/'>службу поддержки</a> openForum. ");
+        Session::setFlash('notice', "<span class='bold'>$firstname, Ваши данные успешно отредактированы.</span> Если у Вас есть жалобы или предложения к нам, Вы всегда можете обратиться в <a href='/forum/feedback/'>службу поддержки</a> openForum. ");
 
     }
 

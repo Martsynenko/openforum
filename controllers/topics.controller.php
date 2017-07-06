@@ -73,6 +73,8 @@ class TopicsController extends Controller {
 
     public function my(){
 
+        $this->data['prev_uri'] = $_SERVER['HTTP_REFERER'];
+
         $params = App::getRouter()->getParams();
 
         if(!empty($params[0])){
@@ -83,12 +85,17 @@ class TopicsController extends Controller {
 
         $id = Session::get('id');
 
+        $count_topics = $this->model->countTopics($id);
+        if(empty($count_topics)) $count_topics = '0';
+        Session::set('count_topics', $count_topics);
+        $this->data['count_user_topics'] = $count_topics;
+
         $this->data['topics'] = $this->model->getUserTopics($id, $page);
 
         $this->data['views'] = $this->model->getCountViews();
 
         if(empty($this->data['topics'])){
-            Session::setFlash('nodata', 'У вас нет опубликованых тем. Вы можете опубликовать новую тему прямо сейчас. Для этого перейдите в раздел <a href="/topics/newtopic/">Создать тему</a>. Или найдите похожую тему на <a href="/">форуме</a>. Также можете воспользоваться поиском для поиска похожих тем.');
+            Session::setFlash('nodata', '<span class="bold">Вы можете опубликовать новую тему прямо сейчас. </span>Для этого перейдите в раздел <a href="/topics/newtopic/">Создать тему</a>. Или найдите похожую тему на <a href="/">форуме</a>. Также можете воспользоваться поиском для поиска похожих тем.');
         }
 
         /* Формирую pagination*/
@@ -181,10 +188,14 @@ class TopicsController extends Controller {
 
         $this->data['topic_id'] = $topic_id;
         $this->data['user_id'] = $this->data['topics'][0]['user_id'];
-        $this->data['avatar'] = $this->data['topics'][0]['avatar'];
+        $avatar = $this->data['topics'][0]['avatar'];
+        if(empty($avatar)) $avatar = Config::get('avatar');
+        $this->data['avatar'] = $avatar;
         $this->data['city'] = $this->data['topics'][0]['city'];
         $this->data['firstname'] = $this->data['topics'][0]['firstname'];
         $this->data['lastname'] = $this->data['topics'][0]['lastname'];
+        $user_rank = $this->data['topics'][0]['rank_id'];
+        $this->data['user_rank'] = $this->model->getTitleUserRank($user_rank);
         $this->data['category'] = $this->data['topics'][0]['category'];
         $this->data['rank'] = $this->data['topics'][0]['rank'];
         $this->data['subject'] = $this->data['topics'][0]['subject'];

@@ -11,8 +11,14 @@
     src: url('font/bold.ttf');
 }
 
+html body{
+    /*background-color: #a1c0c1;*/
+    /*background-color: #f7f7f7;*/
+}
+
 body {
-    background: url('../images/admin_images/bg2.jpg') no-repeat center center fixed;
+    /*background: url('../images/admin_images/bg2.jpg') no-repeat center center fixed;*/
+    background: url('../images/admin_images/bg.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -153,7 +159,7 @@ a.link-view-active{
 }
 
 a.link-delete-simple{
-    color: red;
+    color: rgba(206, 91, 73, 0.78);
     padding: 10px;
     line-height: 35px;
     font-family: sans-serif;
@@ -164,6 +170,7 @@ a.link-view{
     line-height: 35px;
     font-family: sans-serif;
     font-size: 12px;
+    color: rgba(78, 143, 199, 0.71);
 }
 
 a.btn-edit{
@@ -246,6 +253,12 @@ span.search-word{
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
+}
+
+p.user-rank{
+    font-size: 11px;
+    font-family: "main.ttf", sans-serif;
+    color: #9d9d9d;
 }
 
 
@@ -338,6 +351,7 @@ span.search-word{
 #header .profile{
     float: right;
     margin-right: 100px;
+    position: relative;
 }
 
 #header .profile span{
@@ -351,6 +365,14 @@ span.search-word{
 
 #header .profile a:hover{
     text-decoration: underline;
+}
+
+#header .profile p{
+    margin: 0;
+    color: #d7d7d7;
+    font-size: 11px;
+    position: absolute;
+    bottom: -10px;
 }
 
 
@@ -605,10 +627,9 @@ span.search-word{
 
 .block-forum h3{
     margin: 0;
-    background-color: #1b6d85;
-    color: #fff;
     font: 20px 'main.ttf';
-    padding: 10px 30px;
+    padding: 10px 0;
+    color: #348ca2;
 }
 
 .block-forum h3 span{
@@ -616,12 +637,13 @@ span.search-word{
 }
 
 .block-forum tr.thead{
-    background-color: #f7f7f7;
     font-size: 14px;
 }
 
 .block-forum tr.thead p{
     margin: 0;
+    font-family: "bold.ttf", sans-serif;
+    color: #31b0d5;
 }
 
 .block-forum tr td.category{
@@ -665,6 +687,13 @@ span.search-word{
 
 .block-forum tr.tbody td.subject p.title-subject{
     font-size: 14px;
+}
+
+.block-forum tr.tbody td.subject h2.title-subject{
+    font-size: 14px;
+    margin: 0;
+    font-family: "bold.ttf", sans-serif;
+    color: #2b65b3;
 }
 
 .block-forum tr.tbody td.subject .author span{
@@ -883,7 +912,7 @@ td.td-btn input[type='submit']{
 
 .block-pagination nav.page-navigation{
     width: 238px;
-    margin: 50px auto;
+    margin: 0 auto;
     text-align: center;
 }
 
@@ -948,13 +977,13 @@ td.td-btn input[type='submit']{
 }
 
 .list-specialist-item{
-    border-bottom: 1px solid #e3e3e3;
-    padding-bottom: 15px;
+    border-bottom: 2px solid #F5F5F5;
+    background-color: #fff;
+    padding: 0 10px 10px 10px;
 }
 
 .list-specialist-item:last-child{
     border-bottom: none;
-    padding-bottom: 0;
 }
 
 .user-specialist img{
@@ -1177,7 +1206,7 @@ h4.similar-user{
 .block-message{
     width: 100%;
     background-color: #F5F5F5;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .block-message h3{
@@ -1190,7 +1219,7 @@ h4.similar-user{
 
 .message-item{
     width: 95%;
-    margin: 15px auto 0;
+    margin: 0 auto 10px;
     background-color: #fff;
     box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
     position: relative;
@@ -1251,6 +1280,12 @@ h4.similar-user{
     font-family: "main.ttf", sans-serif;
     color: #8f8f8f;
     margin-right: 10px;
+}
+
+.message-item-right h1.subject{
+    font-family: "bold.ttf", sans-serif;
+    font-size: 15px;
+    margin: 10px 0 0 0;
 }
 
 .message-item-right p.subject{
@@ -1325,7 +1360,7 @@ h4.similar-user{
 /*************************** HEADER MENU *****************************************/
 
 .header-menu{
-    padding: 10px 20px 0;
+    padding: 10px 20px 10px;
     font-family: sans-serif;
     font-size: 12px;
 }
@@ -1338,6 +1373,40 @@ h4.similar-user{
 
 .header-menu a:last-child{
     border-right: none;
+}
+
+.header-menu span.sort{
+    float: right;
+}
+
+.header-menu a.active-sort{
+    text-decoration: none;
+    color: #939393;
+    pointer-events: none;
+}
+
+.header-menu-sections{
+    padding: 0 20px;
+    font-family: sans-serif;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.header-menu-sections p span{
+    background-color: rgba(49, 176, 213, 0.17);
+    padding: 5px;
+    font-size: 12px;
+    color: #303994;
+    border-radius: 2px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.header-menu-sections p span:hover{
+    background-color: rgba(54, 185, 224, 0.43);
+    color: #4452cb;
+    cursor: pointer;
 }
 
 /*************************** PASSWORD-RECOVERY *****************************************/
@@ -1722,3 +1791,196 @@ h4.similar-user{
     font-size: 12px;
 }
 
+/******************************** BLOCK SECTIONS ********************************************/
+
+.block-sections{
+    width: 100%;
+    min-height: 560px;
+}
+
+p.block-sections-title{
+    font-size: 20px;
+    color: #348ca2;
+}
+
+.block-section-item{
+    width: 270px;
+    height: 160px;
+    float: left;
+    margin-right: 30px;
+    background-color: #212121;
+    position: relative;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.6);
+    margin-bottom: 15px;
+}
+
+.block-section-item:hover{
+    box-shadow: 0 0 7px 0 rgba(0, 0, 0, 1);
+    cursor: pointer;
+}
+
+.block-section-item:nth-child(4),
+.block-section-item:nth-child(7),
+.block-section-item:nth-child(10){
+    margin-right: 0;
+}
+
+.block-section-item a:hover{
+    text-decoration: none;
+}
+
+.block-section-item img{
+    width: 100%;
+    height: 160px;
+    opacity: 0.6;
+}
+
+/*.block-section-item img:hover{*/
+    /*opacity: 0.4;*/
+/*}*/
+
+.block-section-item-descr{
+    position: absolute;
+    top:40px;
+    left: 0;
+    right: 0;
+}
+
+.block-section-item-descr h2{
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.block-section-item-descr p{
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 0;
+    font-family: "bold.ttf", sans-serif;
+}
+
+.block-section-item-descr h2:hover{
+    /*cursor: pointer;*/
+    color: #36d6ff;
+}
+
+
+/********************************** PAGE SECTION *********************************************/
+
+.page-section{
+    margin-top: 40px;
+}
+
+.page-section h6{
+    font-size: 30px;
+}
+
+.page-section h6 a{
+    color: #31b0d5;
+    text-decoration: none;
+}
+
+.page-section-descr p.page-section-descr-info{
+    font-size: 18px;
+}
+
+.page-section-descr p.page-section-descr-title{
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+.page-section-descr p.page-section-descr-info span{
+    margin-right: 5px;
+    font-family: "bold.ttf", sans-serif;
+}
+
+.page-section-descr p.page-section-descr-ranks{
+    font-size: 16px;
+}
+
+.page-section-descr p.page-section-descr-ranks span{
+    background-color: rgba(49, 176, 213, 0.17);
+    padding: 5px;
+    font-size: 12px;
+    color: #303994;
+    border-radius: 2px;
+    margin-right: 5px;
+    display: inline-block;
+    font-family: sans-serif;
+    margin-bottom: 5px;
+}
+
+.page-section-descr p.page-section-descr-ranks span:hover{
+    background-color: rgba(54, 185, 224, 0.43);
+    color: #4452cb;
+    cursor: pointer;
+}
+
+.page-section-descr p.descr-about{
+    font-size: 12px;
+    margin-bottom: 5px;
+    margin-top: 0;
+    color: #9d9d9d;
+}
+
+.table-topics{
+    width: 100%;
+    /*background-color: #fff;*/
+}
+
+.table-topics table{
+    width: 95%;
+    margin: 0 auto;
+    background-color: #fff;
+}
+
+.table-topics table td.subject{
+    width: 70%;
+}
+
+.table-topics table td.section{
+    width: 20%;
+}
+
+.table-topics table td.answers,
+.table-topics table td.views{
+    width: 10%;
+    text-align: center;
+    font-family: "bold.ttf", sans-serif;
+}
+
+.table-topics table thead{
+    background-color: #55d0e2;
+    color: #fff;
+    font-family: "bold.ttf", sans-serif;
+}
+
+.table-topics table tbody span.glyphicon{
+    font-size: 24px;
+    color: #d5d5d5;
+    margin-left: 20px;
+}
+
+.table-topics table tbody .author span{
+    font-size: 12px;
+    color: #a3a3a3;
+}
+
+.table-topics table tbody .author span.glyphicon{
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+.table-topics table tbody td.subject h4{
+    font-size: 14px;
+    color: #31b0d5;
+    margin: 0;
+    font-family: "bold.ttf", sans-serif;
+}
+
+.table-topics table tbody td.section p{
+    font-family: "bold.ttf", sans-serif;
+    color: #6f6f6f;
+}

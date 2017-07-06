@@ -7,6 +7,15 @@ class MessagesController extends Controller {
         $this->model = new modelMessages();
     }
 
+    /*
+     * Сообщения (вопросы) - это разосланные вопросы определнным специалистам(зарегистрированным пользователям)
+     * Возможно три варианта отправления:
+     * 1. Всем пользователям по выбранной категории
+     * 2. Пользователям которые добавлены в список 'Мой список'
+     * 3. Определенному пользователю при нажатии кнопки Задать вопрос
+     */
+
+    // Страница сообщений которые отправлял данный пользовател
     public function user_outbox(){
 
         $id = Session::get('id');
@@ -22,21 +31,25 @@ class MessagesController extends Controller {
             $this->data['count_inbox'] = count($this->data['messages_inbox']);
         }
 
+        // Получаю общее количество сообщений
         $count_messages = $this->data['count_outbox'] + $this->data['count_inbox'];
+        $this->data['count_messages'] = $count_messages;
         Session::set('count_messages', $count_messages);
 
+        // Получаю вопросы которые рассылал данный пользователь
         $this->data['messages'] = $this->model->getMessages($id);
 
         if(empty($this->data['messages'])){
-            Session::setFlash('nodata', '<span class="bold">На данный момент у Вас нет сообщений</span>. Для того чтоб разослать вопрос специалистам перейдите в раздел <a href="/user/messages/new/">Разослать вопрос</a>.');
+            Session::setFlash('nodata', '<span class="bold">На данный момент Вы не рассылали вопрос</span>. Для того чтоб разослать вопрос специалистам перейдите в раздел <a href="/user/messages/new/">Разослать вопрос</a>.');
         }
     }
 
+    // Страница сообщений которые получил данный пользователь
     public function user_inbox(){
 
         $id = Session::get('id');
 
-        /* Получаю сообщения*/
+        /* Получаю вопросы которые получил пользователь */
 
         $this->data['messages'] = $this->model->getMessagesInbox($id);
         $this->data['isset_answer'] = $this->model->checkIssetAnswer($id);
@@ -123,6 +136,7 @@ class MessagesController extends Controller {
 
             }
 
+            // Отправляю письмо с уведомлением модератору, о том что нужно подтвердить публикаю вопроса
             $mail = new PHPMailer(false);
             $mail->isSMTP();
             $mail->Host = Config::get('smtp_host');
@@ -150,6 +164,7 @@ class MessagesController extends Controller {
         $this->data['ranks'] = $this->model->getRanks(1);
     }
 
+    // Страница просмотра сообщения которые отправлял пользователь
     public function user_outview(){
 
         $params = App::getRouter()->getParams();
@@ -183,6 +198,7 @@ class MessagesController extends Controller {
         }
     }
 
+    // Страница просмотра сообщения которые получил пользователь
     public function user_inview(){
 
         $id = Session::get('id');

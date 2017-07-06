@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="форум, специалисты, задать, вопрос, совет, узнать, поиск, ответы, кулинария, юридические, программистов"/>
-    <meta name="description" content="openForum - самый быстрый способ узнать совет у специалистов. Форум для всех категорий профессий и любых специальностей."/>
+    <meta name="keywords" content="форум программистов, форум поваров, форум реклама, форум врачей, форум менеджеров, форум сферы услуг, форум юристов, форум экономистов"/>
+    <meta name="description" content="openForum - самый быстрый способ узнать совет у специалистов. Форум для любых специальностей на любые темы. Здесь Вы можете создавать темы без регистрации и рассылать вопросы специалистам!"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Форум для поиска советов</title>
 
@@ -84,6 +84,14 @@
                 });
             });
         });
+
+        function confirmDelete() {
+            if (confirm("Вы подтверждаете удаление?")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     </script>
     <link rel="stylesheet" href="https://cdn.rawgit.com/jackmoore/colorbox/master/example1/colorbox.css" />
     <script src="https://cdn.rawgit.com/jackmoore/colorbox/master/jquery.colorbox-min.js"></script>
@@ -121,7 +129,7 @@
                     <a href="/forum/" <?php if(App::getRouter()->getController() == 'forum'&&App::getRouter()->getAction() == 'index') { ?> class='active' <?php } ?> ><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Главная</a>
                 </li>
                 <li>
-                    <a href="/topics/newtopic/" <?php if((App::getRouter()->getController() == 'topics')&&App::getRouter()->getAction() == 'new') { ?> class='active' <?php } ?> >+ Создать тему</a>
+                    <a href="/topics/newtopic/" <?php if((App::getRouter()->getController() == 'topics')&&App::getRouter()->getAction() == 'newtopic') { ?> class='active' <?php } ?> >+ Создать тему</a>
                 </li>
                 <li>
                     <a href="" class="no-active">+ Разослать вопрос</a>

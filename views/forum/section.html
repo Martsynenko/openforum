@@ -1,10 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="page-section">
+    <h6>Форум <span class="blue"><a href="/forum/section/1/<?=$data['section']?>"><?=$data['section_title']?></a></span></h6>
+    <div class="page-section-descr">
+        <p class="page-section-descr-info">На этом форуме: <span><?=$data['count_topic']?></span>темы <span><?=$data['count_message']?></span>сообщения <span><?=$data['count_user']?></span>специалистов</p>
+        <p class="page-section-descr-title">Специальности: </p>
+        <p class="descr-about">(Выбирите подкатегорию(специальность) для более точного поиска нужной темы)</p>
+        <p class="page-section-descr-ranks">
+            <?php for($i=0;$i<count($data['ranks']);$i++): ?>
+            <?php if(isset($data['ranks_id'])): ?>
+            <?php if(!in_array($data['ranks'][$i]['id'], $data['ranks_id'])): ?>
+            <a href="<?=$data['link_add_rank']?>/<?=$data['ranks'][$i]['id']?>"><span><?=$data['ranks'][$i]['rank']?></span></a>
+            <?php endif; ?>
+            <?php else: ?>
+            <a href="<?=$data['link_add_rank']?>/<?=$data['ranks'][$i]['id']?>"><span><?=$data['ranks'][$i]['rank']?></span></a>
+            <?php endif; ?>
+            <?php endfor; ?>
+        </p>
+    </div>
+</div>
+<div class="block-message" <?php if(Session::hasFlash('nodata')): ?> style='padding-bottom: 0;' <?php endif; ?>>
+    <h3>Темы форума <?=$data['section_title']?></h3>
+    <?php if(Session::hasFlash('nodata')): ?>
+    <div class="notice">
+        <?php Session::flash('nodata'); ?>
+    </div>
+    <?php endif; ?>
+    <?php if(!empty($data['topics'])): ?>
+    <div class="header-menu">
+        <a href="/">На главную</a>
+        <a href="/topics/my/">Мои темы</a>
+        <a href="/forum/section/1/<?=$data['section']?>">Все темы раздела</a>
+        <?php if(isset($data['sort'])): ?>
+        <span class="sort">
+            Сортировка: <a href="<?=$data['link_sort']?>" <?php if($data['sort'] == 'sort') echo "class='active-sort'"?>>Популярные темы</a> <a href="<?=$data['link_last']?>" <?php if($data['sort'] == 'last') echo "class='active-sort'"?>>Последние темы</a>
+        </span>
+        <?php endif; ?>
+    </div>
+    <?php if(isset($data['ranks_id'])): ?>
+    <div class="header-menu-sections">
+        <p>Убрать разделы:
+            <?php for($i=0;$i<count($data['ranks_title_id']);$i++): ?>
+            <?php
+                $section = $data['section'];
+                $array = $data['ranks_id'];
+                $key = array_search($data['ranks_title_id'][$i]['id'], $array);
+                unset($array[$key]);
+                $str = implode('/', $array);
+                if(count($array) == 0) $link = "/forum/section/1/$section";
+                else $link = "/forum/section/1/$section/rank/$str";
+            ?>
+            <?php $ranks_id = $data['ranks_id']; ?>
+            <a href="<?=$link?>"><span><?=$data['ranks_title_id'][$i]['rank']?></span></a>
+            <?php endfor; ?>
+        </p>
+    </div>
+    <?php endif; ?>
+    <div class="table-topics">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>
+
+                    </td>
+                    <td class="subject">
+                        Тема/Автор
+                    </td>
+                    <td class="answers">
+                        Ответов
+                    </td>
+                    <td class="views">
+                        Просмотров
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+            <?php for($i=0;$i<count($data['topics']);$i++): ?>
+            <?php
+                $topic_id = $data['topics'][$i]['id'];
+                $date_data = $data['topics'][$i]['date'];
+                $date_array = explode(' ', $date_data);
+                $date = $date_array[0];
+                $time = substr($date_array[1], 0, -3);
+                $views = 0;
+                for($j=0;$j<count($data['views']);$j++){
+                    if($data['views'][$j]['topic_id'] == $topic_id) {
+                        $views = $data['views'][$j]['views'];
+                        break;
+                    }
+                }
+            ?>
+                <tr>
+                    <td>
+                        <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                    </td>
+                    <td class="subject">
+                        <div class="author">
+                            <span>Автор: <span class="bold">
+                                <?php if(!empty($data['topics'][$i]['email'])): ?>
+                                <a href="/specialists/view/<?=$data['topics'][$i]['user_id']?>"><?=$data['topics'][$i]['lastname']?> <?=$data['topics'][$i]['firstname']?></a>
+                                <?php else: ?>
+                                <?=$data['topics'][$i]['lastname']?> <?=$data['topics'][$i]['firstname']?>
+                                <?php endif; ?>
+                            </span></span>
+                            <span><span class="glyphicon glyphicon-time"></span><?=$date?> в <?=$time?> </span>
+                        </div>
+                        <a href="/forum/view/1/<?=$data['topics'][$i]['id']?>" class="sub"><h4><?=$data['topics'][$i]['subject']?></h4></a>
+                    </td>
+                    <td class="answers">
+                        <span><?=$data['topics'][$i]['answers']?></span>
+                    </td>
+                    <td class="views">
+                        <span><?=$views?></span>
+                    </td>
+                </tr>
+            <?php endfor; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php endif; ?>
+<?php if($data['count_topics'] > 10): ?>
+<div class="block-pagination">
+    <nav aria-label="Page navigation" class="page-navigation">
+        <ul class="pagination">
+
+            <?php if($data['page'] != 1): ?>
+            <li>
+                <a href="<?=$data['link_previous']?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <?php
+                $count_items = 0;
+                for($i=$data['page_start'];$i<=$data['count_pages'];$i++):
+                $section = $data['section'];
+                if(isset($data['link_rank'])){
+                    $link_rank = $data['link_rank'];
+                    if($data['sort'] == 'sort'){
+                        $link = "/forum/section/$i/$section/rank/$link_rank/sort";
+                    } else {
+                        $link = "/forum/section/$i/$section/rank/$link_rank";
+                    }
+                } else {
+                    if($data['sort'] == 'sort'){
+                        $link = "/forum/section/$i/$section/sort";
+                    } else {
+                        $link = "/forum/section/$i/$section";
+                    }
+                }
+
+            ?>
+            <li><a href="<?=$link?>" <?php if($i == $data['page']) echo "class='active'" ?>> <?=$i?> </a></li>
+            <?php
+                $count_items++;
+                if($count_items%5===0) break;
+                endfor;
+            ?>
+
+            <?php if($data['page'] != $data['count_pages']): ?>
+            <li>
+                <a href="<?=$data['link_next']?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
+<?php endif; ?>
+</div>

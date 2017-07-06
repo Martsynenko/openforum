@@ -22,6 +22,7 @@
             <?php endif; ?>
             <p class="user"><?=$position?></p>
             <?php if(!empty($email)): ?>
+            <p class="user-rank"><?=$data['user_rank']?></p>
             <p class="city"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$data['city']?></p>
             <?php endif; ?>
         </div>
@@ -67,6 +68,7 @@
             <?php endif; ?>
             <p class="user"><?=$position?></p>
             <?php if(!empty($email)): ?>
+            <p class="user-rank"><?=$data['answers'][$i]['rank']?></p>
             <p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><?=$city?></p>
             <?php endif; ?>
         </div>

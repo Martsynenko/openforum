@@ -8,6 +8,15 @@ Disallow: /admin/moderationmessages/
 Disallow: /admin/section/
 Disallow: /admin/rank/
 Disallow: /admin/feedback/
+Disallow: /subscribe/
+Disallow: /forum/feedback/
+Disallow: /specialists/
+Disallow: /topics/newtopic/
+Disallow: /topics/my/
+Disallow: /user/profile/edit/
+Disallow: /user/specialists/index/
+Disallow: /user/messages/
+Disallow: /user/messages/new/
 
 Host: openforum.com.ua
 Sitemap: http://openforum.com.ua/webroot/sitemap.xml

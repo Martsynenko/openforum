@@ -1,6 +1,6 @@
 <script>
     function onPopupClose(){
-        Cookies.set('colorbox', 'yes', { expires: 10 });
+        Cookies.set('colorbox', 'yes', { expires: 86400 });
     }
 
     function displayPopup(){
@@ -8,7 +8,7 @@
             html: "<div id='subscribe'>" +
             "<h2>Как насчет подписки на интересные темы???</h2>" +
             "<p>Все что нужно, только Ваше имя, email <br>и категория которая Вам интересна!</p>" +
-            "<form action='/forum/subscribe' method='post'>" +
+            "<form action='/subscribe/index' method='post'>" +
             "<div class='group'>" +
             "<label>" +
             "Категория" +
@@ -139,16 +139,34 @@
     </form>
 </div>
 <div class="block-forum">
+    <?php if(!isset($_SESSION['sort'])&&!isset($_SESSION['search'])): ?>
+    <div class="block-sections">
+        <p class="block-sections-title">Выбирите раздел форума или воспользуйтесь поиском или сортировкой</p>
+        <?php for($i=0;$i<count($data['categories']);$i++): ?>
+        <div class="block-section-item">
+            <a href="/forum/section/1/<?=$data['categories'][$i]['id']?>/"><img src="<?=$data['categories'][$i]['image']?>" alt="section"/></a>
+            <div class="block-section-item-descr">
+                <a href="/forum/section/1/<?=$data['categories'][$i]['id']?>"><h2><?=$data['categories'][$i]['category']?></h2></a>
+                <?php for($j=0;$j<count($data['section_info']);$j++): ?>
+                <?php if($data['section_info'][$j]['cat_id'] == $data['categories'][$i]['id']): ?>
+                <p>СОЗДАННЫХ ТЕМ: <?=$data['section_info'][$j]['count']?></p>
+                <?php endif; ?>
+                <?php endfor; ?>
+            </div>
+        </div>
+        <?php endfor; ?>
+    </div>
+    <?php endif; ?>
     <?php $params = App::getRouter()->getParams();
     if(isset($_SESSION['sort'])&&!empty($params[1])&&$params[1] == 'sort'): ?>
         <h3><?=$data['title_sort']?> <span>/</span> <?=$data['title_category']?> <span>/</span> <?=$data['title_rank']?></h3>
     <?php else: ?>
-        <h3>Поcледние темы </h3>
+        <h3>Поcледние созданные темы на форуме</h3>
     <?php endif; ?>
-    <table class="table table-bordered">
+    <table class="table table-striped">
         <tr class="thead">
             <td class="category">
-                <p class="title">Категор./Специальность</p>
+                <p class="title">Раздел/Специальность</p>
             </td>
             <td class="subject">
                 <p class="title">Тема/Автор</p>
@@ -201,7 +219,7 @@
                     </span></span>
                     <span><span class="glyphicon glyphicon-time"></span><?="$date в $time"?> </span>
                 </div>
-                <a href="/forum/view/1/<?=$topic_id?>" class="sub"><p class="title-subject"><?=$subject?></p></a>
+                <a href="/forum/view/1/<?=$topic_id?>" class="sub"><h2 class="title-subject"><?=$subject?></h2></a>
             </td>
             <td class="answer">
                 <p class="title"><?=$answers?></p>
